@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,9 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class BlogController {
   @Autowired private BlogService blogService;
   @PostMapping(value = "")
-  public ResponseEntity<?> createStudentCourse(@RequestParam(name = "userId") Long userId,@ModelAttribute BlogRequestDTO blogRequestDTO)
+  public ResponseEntity<?> createBlog(@RequestParam(name = "userId") Long userId,@ModelAttribute BlogRequestDTO blogRequestDTO)
       throws IOException {
     return blogService.createBlog(userId, blogRequestDTO);
+  }
+
+  @PutMapping(value = "")
+  public ResponseEntity<?> updateBlog(@RequestParam(name = "blogId") Long blogId,@ModelAttribute BlogRequestDTO blogRequestDTO)
+      throws IOException {
+    return blogService.updateBlog(blogId, blogRequestDTO);
   }
 
   @GetMapping(value = "{blogId}")

@@ -6,5 +6,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface BlogService {
  ResponseEntity<?> createBlog(Long userId, BlogRequestDTO blogRequestDTO) throws IOException;
+ ResponseEntity<?> updateBlog(Long blogId, BlogRequestDTO blogRequestDTO) throws IOException;
  ResponseEntity<?> getBlogById(Long blogId);
 }

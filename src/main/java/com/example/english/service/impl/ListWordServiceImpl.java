@@ -85,4 +85,31 @@ public class ListWordServiceImpl implements ListWordService {
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTO));
   }
+
+  @Override
+  public ResponseEntity<?> addWordToListWord(Long listWordId, ListWordRequestDTO listWordRequestDTO)
+      throws IOException {
+    ListWord listWord = listWordRepository.findById(listWordId).orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
+
+    List<WordResponseDTO> wordResponseDTOS = new ArrayList<>();
+
+    //Create word of list word
+    for (WordRequestDTO wordRequestDTO : listWordRequestDTO.getWordRequestDTOS()) {
+      Word word = WordMapper.INSTANCE.wordRequestDTOToWord(wordRequestDTO);
+
+      if (wordRequestDTO.getImage() != null) {
+        word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
+      }
+
+      word.setListWord(listWord);
+
+      WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(wordRepository.save(word));
+      wordResponseDTOS.add(wordResponseDTO);
+    }
+
+    ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWord);
+    listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create list word success", listWordResponseDTO));
+  }
 }

@@ -13,6 +13,7 @@ import com.example.english.repository.QuestionRepository;
 import com.example.english.service.AnswerService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,6 +30,30 @@ public class AnswerServiceImpl implements AnswerService {
 
     List<AnswerResponseDTO> answerList = createAnswer(answerRequestDTOS, question);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add answer success", answerList));
+  }
+
+  @Override
+  public ResponseEntity<ResponseObject> updateAnswer(Long id, AnswerRequestDTO answerRequestDTO) {
+
+    Answer answer = answerRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find answer with ID = " + id));
+
+    answer.setContent(answerRequestDTO.getContent());
+    answer.setCorrect(answerRequestDTO.isCorrect());
+
+    AnswerResponseDTO answerResponseDTO = AnswerMapper.INSTANCE.answerToAnswerResponseDTO(answerRepository.save(answer));
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update answer success!", answerResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<ResponseObject> deleteAnswer(Long id) {
+    Answer getAnswer = answerRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find answer with ID = " + id));
+
+    answerRepository.delete(getAnswer);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Delete answer successfully!"));
   }
 
   public static List<AnswerResponseDTO> createAnswer(List<AnswerRequestDTO> answerRequestDTOList, Question question) {

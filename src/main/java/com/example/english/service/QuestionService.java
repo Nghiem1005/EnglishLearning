@@ -9,4 +9,8 @@ public interface QuestionService {
   ResponseEntity<?> addQuestion(Long partId, List<QuestionRequestDTO> questionRequestDTOS)
       throws IOException;
 
+  ResponseEntity<?> updateQuestion(Long id, QuestionRequestDTO questionRequestDTO)
+      throws IOException;
+
+  ResponseEntity<?> deleteQuestion(Long id);
 }

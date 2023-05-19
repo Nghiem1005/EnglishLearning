@@ -43,6 +43,29 @@ public class BlogServiceImpl implements BlogService {
   }
 
   @Override
+  public ResponseEntity<?> updateBlog(Long blogId, BlogRequestDTO blogRequestDTO)
+      throws IOException {
+    Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Could not find blog with ID = " + blogId));
+
+    if (blogRequestDTO.getTitle() != null) {
+      blog.setTitle(blogRequestDTO.getTitle());
+    }
+
+    if (blogRequestDTO.getContent() != null) {
+      blog.setContent(blogRequestDTO.getContent());
+    }
+
+    if (blogRequestDTO.getImage() != null) {
+      blog.setImage(storageService.uploadFile(blogRequestDTO.getImage()));
+    }
+
+    BlogResponseDTO blogResponseDTO = BlogMapper.INSTANCE.blogToBlogResponseDTO(blogRepository.save(blog));
+
+    blogResponseDTO.setUserResponseDTO(UsersMapper.MAPPER.userToUserResponseDTO(blog.getUser()));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create blog success", blogResponseDTO));
+  }
+
+  @Override
   public ResponseEntity<?> getBlogById(Long blogId) {
     Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Could not find blog with ID = " + blogId));
 

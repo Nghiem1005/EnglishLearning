@@ -17,6 +17,7 @@ import com.example.english.service.StorageService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,32 @@ public class QuestionServiceImpl implements QuestionService {
 
     List<QuestionResponseDTO> questionList = createQuestion(questionRequestDTOS, part);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add question success", questionList));
+  }
+
+  @Override
+  public ResponseEntity<ResponseObject> updateQuestion(Long id, QuestionRequestDTO questionRequestDTO)
+      throws IOException {
+    Question question = questionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + id));;
+
+    question.setContent(questionRequestDTO.getContent());
+
+    if (questionRequestDTO.getImage() != null) {
+      question.setImage(storageService.uploadFile(questionRequestDTO.getImage()));
+    }
+
+    QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionRepository.save(question));
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update question success!", questionResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<ResponseObject> deleteQuestion(Long id) {
+    Question getQuestion = questionRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + id));
+
+    questionRepository.delete(getQuestion);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Delete question successfully!"));
   }
 
   public static List<QuestionResponseDTO> createQuestion(List<QuestionRequestDTO> questionRequestDTOList, Part part)
