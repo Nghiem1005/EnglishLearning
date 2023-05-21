@@ -12,4 +12,5 @@ public interface ContestService {
   ResponseEntity<?> updateResult(Long contestId, Long userId, float point);
   ResponseEntity<?> markContest(Long contestId, Long userId, List<PartResultRequestDTO> partResultRequestDTOS);
   ResponseEntity<?> getContestById(Long contestId);
+  ResponseEntity<?> deleteContest(Long id);
 }

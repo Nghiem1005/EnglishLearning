@@ -86,7 +86,7 @@ public class ListWordServiceImpl implements ListWordService {
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTO));
   }
 
-  @Override
+  /*@Override
   public ResponseEntity<?> addWordToListWord(Long listWordId, ListWordRequestDTO listWordRequestDTO)
       throws IOException {
     ListWord listWord = listWordRepository.findById(listWordId).orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
@@ -111,5 +111,5 @@ public class ListWordServiceImpl implements ListWordService {
     listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create list word success", listWordResponseDTO));
-  }
+  }*/
 }

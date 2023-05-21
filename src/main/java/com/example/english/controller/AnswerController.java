@@ -21,7 +21,7 @@ public class AnswerController {
   @Autowired
   private AnswerService answerService;
   @PostMapping(value = "")
-  public ResponseEntity<?> addAnswer(@ModelAttribute List<AnswerRequestDTO> answerRequestDTOS, @RequestParam(name = "questionId") Long questionId) throws IOException {
+  public ResponseEntity<?> addAnswer(@ModelAttribute List<AnswerRequestDTO> answerRequestDTOS, @RequestParam(name = "questionId") Long questionId) {
     return answerService.addAnswer(questionId, answerRequestDTOS);
   }
 

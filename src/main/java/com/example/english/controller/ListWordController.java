@@ -28,9 +28,9 @@ public class ListWordController {
     return listWordService.getListWordById(id);
   }
 
-  @PostMapping(value = "/word")
+  /*@PostMapping(value = "/word")
   public ResponseEntity<?> addWordToListWord(@RequestParam(name = "listWordId") Long listWordId, @ModelAttribute ListWordRequestDTO listWordRequestDTO)
       throws IOException {
     return listWordService.addWordToListWord(listWordId, listWordRequestDTO);
-  }
+  }*/
 }

@@ -215,6 +215,16 @@ public class ContestServiceImpl implements ContestService {
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get contest by ID", contestResponseDTO));
   }
 
+  @Override
+  public ResponseEntity<?> deleteContest(Long id) {
+    Contest getContest = contestRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find contest with ID = " + id));
+
+    contestRepository.delete(getContest);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Delete contest successfully!"));
+  }
+
   public List<Question> getQuestionByContest(Contest contest) {
     List<Question> questions = new ArrayList<>();
 

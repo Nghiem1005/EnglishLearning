@@ -3,6 +3,7 @@ package com.example.english.service.impl;
 import com.example.english.dto.request.WordRequestDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.dto.response.WordResponseDTO;
+import com.example.english.entities.Answer;
 import com.example.english.entities.ListWord;
 import com.example.english.entities.Word;
 import com.example.english.exceptions.ResourceNotFoundException;
@@ -46,5 +47,42 @@ public class WordServiceImpl implements WordService {
       wordResponseDTOS.add(wordResponseDTO);
     }
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add word to list word success", wordRequestDTOS));
+  }
+
+  @Override
+  public ResponseEntity<?> updateWord(Long wordId, WordRequestDTO wordRequestDTO)
+      throws IOException {
+    Word word = wordRepository.findById(wordId)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find word with ID = " + wordId));
+    if (wordRequestDTO.getContent() != null) {
+      word.setContent(wordRequestDTO.getContent());
+    }
+
+    if (wordRequestDTO.getDefine() != null) {
+      word.setDefine(wordRequestDTO.getDefine());
+    }
+
+    if (wordRequestDTO.getExample() != null) {
+      word.setDefine(wordRequestDTO.getExample());
+    }
+
+    if (wordRequestDTO.getImage() != null) {
+      word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
+    }
+
+    Word wordSaved = wordRepository.save(word);
+
+    WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(wordSaved);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update word success", wordResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<?> deleteWord(Long id) {
+    Word getWord = wordRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find word with ID = " + id));
+
+    wordRepository.delete(getWord);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Delete word successfully!"));
   }
 }
