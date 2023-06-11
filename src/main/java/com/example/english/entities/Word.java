@@ -22,7 +22,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "tbl_user")
+@Table(name = "tbl_word")
 public class Word {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)

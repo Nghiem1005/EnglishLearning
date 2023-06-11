@@ -21,5 +21,5 @@ public class UserRequestDTO {
   private String password;
   private boolean enable;
   private String role;
-  MultipartFile image;
+  private MultipartFile image;
 }
