@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/word_list")
+@RequestMapping(value = "/api/v1/word_list")
 public class ListWordController {
   @Autowired private ListWordService listWordService;
   @PostMapping(value = "")

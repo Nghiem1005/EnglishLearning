@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/inquiry")
+@RequestMapping(value = "/api/v1/inquiry")
 public class InquiryController {
   @Autowired
   private InquiryService inquiryService;

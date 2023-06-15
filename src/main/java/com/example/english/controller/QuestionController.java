@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/question")
+@RequestMapping(value = "/api/v1/question")
 public class QuestionController {
   @Autowired private QuestionService questionService;
   @PostMapping(value = "")

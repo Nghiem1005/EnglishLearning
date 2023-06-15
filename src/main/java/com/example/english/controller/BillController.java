@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/bill")
+@RequestMapping(value = "/api/v1/bill")
 public class BillController {
   @Autowired private BillService billService;
   @PostMapping(value = "")

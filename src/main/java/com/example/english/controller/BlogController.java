@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/blog")
+@RequestMapping(value = "/api/v1/blog")
 public class BlogController {
   @Autowired private BlogService blogService;
   @PostMapping(value = "")

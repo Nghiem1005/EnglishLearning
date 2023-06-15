@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/practice")
+@RequestMapping(value = "/api/v1/practice")
 public class PracticeController {
   @Autowired
   private PracticeService practiceService;

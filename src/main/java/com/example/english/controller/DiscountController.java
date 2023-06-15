@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/discount")
+@RequestMapping(value = "/api/v1/discount")
 public class DiscountController {
   @Autowired private DiscountService discountService;
 

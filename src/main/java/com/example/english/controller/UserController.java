@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/api/v1/user")
 public class UserController {
   @Autowired
   private UserService userService;

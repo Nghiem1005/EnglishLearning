@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(value = "/exam")
+@RequestMapping(value = "/api/v1/exam")
 public class ExamController {
   @Autowired private ExamService examService;
 
