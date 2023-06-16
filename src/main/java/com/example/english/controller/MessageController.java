@@ -32,4 +32,9 @@ public class MessageController {
   public ResponseEntity<?> getAllMessageBySenderAndReceiver(@RequestParam(name = "senderId") Long senderId, @RequestParam(name = "receiverId") Long receiverId) {
     return messageService.getAllMessageBySenderAndReceiver(senderId, receiverId);
   }
+
+  @GetMapping("/message/sender")
+  public ResponseEntity<?> getAllMessageBySender(@RequestParam(name = "senderId") Long senderId) {
+    return messageService.getAllReceiverBySender(senderId);
+  }
 }
