@@ -13,6 +13,7 @@ import org.springframework.stereotype.Repository;
 public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
   List<Feedback> findFeedbacksByUser(User user);
   Page<Feedback> findFeedbacksByCourse(Pageable pageable, Course course);
+  Page<Feedback> findFeedbacksByCourseAndPending(Pageable pageable, Course course, boolean pending);
   List<Feedback> findFeedbacksByCourse(Course course);
   Page<Feedback> findFeedbacksByMainFeedback(Pageable pageable, Feedback feedback);
 }

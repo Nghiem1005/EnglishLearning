@@ -36,6 +36,8 @@ public class Feedback {
   @ElementCollection
   private List<String> images;
 
+  private boolean pending = false;
+
   @CreationTimestamp
   private Date createDate;
 

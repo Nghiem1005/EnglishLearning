@@ -63,6 +63,15 @@ public class FeedbackController {
     return feedbackService.getAllFeedbackByCourse(pageable, courseId);
   }
 
+  @GetMapping(value = "/course/pending")
+  public ResponseEntity<?> getAllFeedbackByCourseAndPending(
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(name = "courseId") Long courseId, @RequestParam(name = "pending", defaultValue = "false") boolean pending) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return feedbackService.getAllFeedbackByCourseAndPending(pageable, courseId, pending);
+  }
+
   @GetMapping(value = "/feedbackMain")
   public ResponseEntity<?> getAllFeedbackByFeedbackMain(
       @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,

@@ -10,6 +10,8 @@ public interface FeedbackService {
 
     ResponseEntity<?> getAllFeedbackByCourse(Pageable pageable, Long courseId);
 
+    ResponseEntity<?> getAllFeedbackByCourseAndPending(Pageable pageable, Long courseId, boolean pending);
+
     ResponseEntity<?> createFeedback(DiscussRequestDTO feedbackRequestDTO) throws IOException;
 
     ResponseEntity<?> updateFeedback(String content, Long id);

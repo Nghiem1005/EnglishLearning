@@ -59,6 +59,19 @@ public class FeedbackServiceImpl implements FeedbackService {
         getFeedbackList.getTotalPages()));
   }
 
+  @Override
+  public ResponseEntity<?> getAllFeedbackByCourseAndPending(Pageable pageable, Long courseId,
+      boolean pending) {
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + courseId));
+
+    Page<Feedback> getFeedbackList = feedbackRepository.findFeedbacksByCourseAndPending(pageable, course, pending);
+    List<Feedback> feedbackList = getFeedbackList.getContent();
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListFeedbackResponseDTO(feedbackList),
+        getFeedbackList.getTotalPages()));
+  }
+
   private List<DiscussResponseDTO> toListFeedbackResponseDTO(List<Feedback> feedbackList){
     //Convert feedback to feedback response dto
     List<DiscussResponseDTO> feedbackResponseDTOList = new ArrayList<>();
