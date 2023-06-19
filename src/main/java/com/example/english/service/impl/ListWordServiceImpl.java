@@ -21,6 +21,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -68,7 +70,7 @@ public class ListWordServiceImpl implements ListWordService {
   }
 
   @Override
-  public ResponseEntity<?> getListWordById(Long listWordId) {
+  public ResponseEntity<?> getListWordById(Pageable pageable, Long listWordId) {
     ListWord listWord = listWordRepository.findById(listWordId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
 
@@ -76,7 +78,7 @@ public class ListWordServiceImpl implements ListWordService {
 
     //Get word of list word
     List<WordResponseDTO> wordResponseDTOS = new ArrayList<>();
-    List<Word> words = wordRepository.findWordsByListWord(listWord);
+    List<Word> words = wordRepository.findWordsByListWord(pageable, listWord).getContent();
     for (Word word : words) {
       WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(word);
       wordResponseDTOS.add(wordResponseDTO);
@@ -84,6 +86,20 @@ public class ListWordServiceImpl implements ListWordService {
     listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<?> getListWordByUser(Pageable pageable, Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
+
+    List<ListWord> listWords = listWordRepository.findListWordsByUser(pageable, user).getContent();
+    List<ListWordResponseDTO> listWordResponseDTOS = new ArrayList<>();
+    for (ListWord listWord : listWords) {
+      ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWord);
+
+      listWordResponseDTOS.add(listWordResponseDTO);
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTOS));
   }
 
   /*@Override

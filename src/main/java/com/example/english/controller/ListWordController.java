@@ -2,8 +2,11 @@ package com.example.english.controller;
 
 import com.example.english.dto.request.ListWordRequestDTO;
 import com.example.english.service.ListWordService;
+import com.example.english.utils.Utils;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -24,8 +27,19 @@ public class ListWordController {
   }
 
   @GetMapping(value = "{id}")
-  public ResponseEntity<?> getListWordById(@PathVariable(name = "id") Long id) {
-    return listWordService.getListWordById(id);
+  public ResponseEntity<?> getListWordById(@PathVariable(name = "id") Long id,
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return listWordService.getListWordById(pageable, id);
+  }
+
+  @GetMapping(value = "{userId}")
+  public ResponseEntity<?> getListWordByUserId(@PathVariable(name = "userId") Long userId,
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return listWordService.getListWordByUser(pageable, userId);
   }
 
   /*@PostMapping(value = "/word")
