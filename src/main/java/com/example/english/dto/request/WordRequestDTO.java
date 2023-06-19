@@ -11,6 +11,8 @@ import org.springframework.web.multipart.MultipartFile;
 public class WordRequestDTO {
   private String content;
   private String define;
+  private String spelling;
+  private String type;
   private String example;
   private MultipartFile image;
 }

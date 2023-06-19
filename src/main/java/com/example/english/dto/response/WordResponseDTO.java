@@ -11,6 +11,8 @@ public class WordResponseDTO {
   private Long id;
   private String content;
   private String define;
+  private String spelling;
+  private String type;
   private String image;
   private String example;
 }

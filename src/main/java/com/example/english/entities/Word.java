@@ -35,6 +35,10 @@ public class Word {
   @NotNull(message = "Define is required")
   private String define;
 
+  private String type;
+
+  private String spelling;
+
   private String example;
 
   @Column(name = "images", length = 3000)
