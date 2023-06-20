@@ -3,6 +3,8 @@ package com.example.english.repository;
 import com.example.english.entities.Bill;
 import com.example.english.entities.Course;
 import com.example.english.entities.User;
+import com.example.english.models.ICourseSeller;
+import com.example.english.models.IStatisticDay;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -13,7 +15,7 @@ import org.springframework.stereotype.Repository;
 public interface BillRepository extends JpaRepository<Bill, Long> {
   List<Bill> findBillsByUser(User stuednt);
   List<Bill> findBillsByCourse(Course course);
-  /*@Query(value = "select course_id as courseId, count(course_id) as amount from tbl_bill group by course_id order by amount", nativeQuery = true)
+  @Query(value = "select course_id as courseId, count(course_id) as amount from tbl_bill group by course_id order by amount", nativeQuery = true)
   List<ICourseSeller> bestSeller();
   @Query(value = "select sum(total_price) as price from tbl_bill", nativeQuery = true)
   double totalPrice();
@@ -28,5 +30,5 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
   @Query(value = "select weekday(create_date) as weekDay, SUM(total_price) as totalValue  from tbl_bill \n"
       + "      where create_date < now() and create_date > date_sub(now(), interval :amountDay Day) \n"
       + "      group by weekday(create_date)", nativeQuery = true)
-  List<IStatisticDay> findRevenueByDay(@Param("amountDay") int amountDay);*/
+  List<IStatisticDay> findRevenueByDay(@Param("amountDay") int amountDay);
 }
