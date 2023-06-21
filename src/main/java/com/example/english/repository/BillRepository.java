@@ -6,6 +6,7 @@ import com.example.english.entities.User;
 import com.example.english.models.ICourseSeller;
 import com.example.english.models.IStatisticDay;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +19,7 @@ public interface BillRepository extends JpaRepository<Bill, Long> {
   @Query(value = "select course_id as courseId, count(course_id) as amount from tbl_bill group by course_id order by amount", nativeQuery = true)
   List<ICourseSeller> bestSeller();
   @Query(value = "select sum(price) as price from tbl_bill", nativeQuery = true)
-  double totalPrice();
+  Optional<Double> totalPrice();
 
   @Query(value = "select weekday(b.create_date) as weekDay, SUM(b.price) as totalValue  from tbl_bill as b \n"
       + "inner join tbl_course as c on b.course_id = c.id\n"

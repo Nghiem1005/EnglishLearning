@@ -68,7 +68,11 @@ public class StatisticServiceImpl implements StatisticService {
     List<User> userList = userRepository.findUsersByRole(Role.STUDENT);
     List<Course> courseList = courseRepository.findAll();
     List<User> teacherList = userRepository.findUsersByRole(Role.TEACHER);
-    double revenue = billRepository.totalPrice();
+    double revenue = 0;
+    if (billRepository.totalPrice().isPresent()) {
+      revenue = billRepository.totalPrice().get();
+    }
+
 
     StatisticResponseDTO statisticResponseDTO = new StatisticResponseDTO(userList.size(), revenue, courseList.size(), teacherList.size());
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "General statistic.", statisticResponseDTO));
