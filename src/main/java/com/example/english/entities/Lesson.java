@@ -36,13 +36,13 @@ public class Lesson {
   private Long id;
 
   @Column(length = 45)
-  @NotNull(message = "Course name is required")
+  @NotNull(message = "Lesson name is required")
   private String name;
 
-  @NotNull(message = "Course video is required")
+  @NotNull(message = "Lesson video is required")
   private String video;
 
-  @NotNull(message = "Course description is required")
+  @NotNull(message = "Lesson description is required")
   private String description;
 
   @Min(value = 0, message = "Percent must be greater 0")

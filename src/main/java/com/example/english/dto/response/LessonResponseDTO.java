@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 public class LessonResponseDTO {
   private Long id;
   private String name;
+  private String description;
+  private int serial;
   private String document;
   private Long courseId;
   private String courseName;

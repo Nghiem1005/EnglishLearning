@@ -10,6 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class LessonRequestDTO {
   private String name;
+  private String description;
   private MultipartFile video;
-  private int serial;
 }

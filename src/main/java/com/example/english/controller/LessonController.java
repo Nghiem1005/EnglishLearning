@@ -2,9 +2,11 @@ package com.example.english.controller;
 
 import com.example.english.dto.request.LessonRequestDTO;
 import com.example.english.service.LessonService;
+import com.example.english.service.StorageService;
 import com.example.english.utils.Utils;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -16,11 +18,13 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController
 @RequestMapping(value = "/api/v1/lesson")
 public class LessonController {
   @Autowired private LessonService lessonService;
+  @Autowired private StorageService storageService;
 
   @PostMapping(value = "")
   public ResponseEntity<?> createLesson(@RequestParam(name = "courseId") Long courseId,
@@ -47,5 +51,10 @@ public class LessonController {
       @RequestParam(name = "courseId") Long courseId) {
     Pageable pageable = PageRequest.of(page - 1, size);
     return lessonService.getAllLessonByCourse(pageable, courseId);
+  }
+
+  @GetMapping(value = "/video/{fileName}", produces = "video/mp4")
+  public Mono<Resource> readVideoContent(@PathVariable("fileName") String fileName) {
+    return storageService.readVideoContent(fileName);
   }
 }
