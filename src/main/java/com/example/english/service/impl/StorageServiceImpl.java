@@ -2,15 +2,22 @@ package com.example.english.service.impl;
 
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.service.StorageService;
+import com.example.english.utils.Converter;
 import com.google.cloud.storage.Blob;
 import com.google.cloud.storage.Bucket;
 import com.google.cloud.storage.Storage;
 import com.google.cloud.storage.StorageOptions;
 import com.google.firebase.cloud.StorageClient;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import reactor.core.publisher.Mono;
 
 @Service
 public class StorageServiceImpl implements StorageService {
@@ -21,15 +28,7 @@ public class StorageServiceImpl implements StorageService {
     this.storage = StorageOptions.newBuilder().setProjectId("englishlearningweb").build().getService();
   }
 
-  public String uploadFile(MultipartFile file) throws IOException {
-    Bucket bucket = StorageClient.getInstance().bucket();
 
-    String name = generateFileName(file);
-
-    bucket.create(name, file.getBytes(), file.getContentType());
-
-    return name;
-  }
 
   private String generateFileName(MultipartFile file) {
     String name = "";
@@ -39,6 +38,17 @@ public class StorageServiceImpl implements StorageService {
     } else {
       name = file.getContentType() + "_" + UUID.randomUUID();
     }
+    return name;
+  }
+
+  @Override
+  public String uploadFile(MultipartFile file) throws IOException {
+    Bucket bucket = StorageClient.getInstance().bucket();
+
+    String name = generateFileName(file);
+
+    bucket.create(name, file.getBytes(), file.getContentType());
+
     return name;
   }
 
@@ -61,6 +71,16 @@ public class StorageServiceImpl implements StorageService {
 
     Blob blob = bucket.get(fileName);
     return blob;
+  }
+
+  @Override
+  public Mono<Resource> readVideoContent(String fileName) {
+    Bucket bucket = StorageClient.getInstance().bucket();
+
+    Blob blob = bucket.get(fileName);
+    Resource resource = Converter.blobToResource(blob);
+    return Mono.fromSupplier(()->resource);
+
   }
 
 }

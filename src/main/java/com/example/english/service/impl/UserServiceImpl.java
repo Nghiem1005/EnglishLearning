@@ -171,8 +171,8 @@ public class UserServiceImpl implements UserService {
 
     //Storage image
     if (userRequestDTO.getImage() != null) {
-      user.setImages(
-          imageStorageService.uploadFile(userRequestDTO.getImage()));
+      String fileName = imageStorageService.uploadFile(userRequestDTO.getImage());
+      user.setImages(imageStorageService.getFile(fileName).getMediaLink());
     }
 
     //Set enable
