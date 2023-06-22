@@ -51,8 +51,7 @@ public class ListWordServiceImpl implements ListWordService {
         Word word = WordMapper.INSTANCE.wordRequestDTOToWord(wordRequestDTO);
 
         if (wordRequestDTO.getImage() != null) {
-          String fileName = storageService.uploadFile(wordRequestDTO.getImage());
-          word.setImages(storageService.getFile(fileName).getMediaLink());
+          word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
         }
 
         word.setListWord(listWordSaved);

@@ -38,8 +38,7 @@ public class WordServiceImpl implements WordService {
 
       word.setListWord(listWord);
       if (wordRequestDTO.getImage() != null) {
-        String fileName = storageService.uploadFile(wordRequestDTO.getImage());
-        word.setImages(storageService.getFile(fileName).getMediaLink());
+        word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
       }
       Word wordSaved = wordRepository.save(word);
 
@@ -68,8 +67,7 @@ public class WordServiceImpl implements WordService {
     }
 
     if (wordRequestDTO.getImage() != null) {
-      String fileName = storageService.uploadFile(wordRequestDTO.getImage());
-      word.setImages(storageService.getFile(fileName).getMediaLink());
+      word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
     }
 
     Word wordSaved = wordRepository.save(word);

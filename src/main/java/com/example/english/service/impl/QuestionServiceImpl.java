@@ -47,8 +47,7 @@ public class QuestionServiceImpl implements QuestionService {
     question.setContent(questionRequestDTO.getContent());
 
     if (questionRequestDTO.getImage() != null) {
-      String fileName = storageService.uploadFile(questionRequestDTO.getImage());
-      question.setImage(storageService.getFile(fileName).getMediaLink());
+      question.setImage(storageService.uploadFile(questionRequestDTO.getImage()));
     }
 
     QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionRepository.save(question));

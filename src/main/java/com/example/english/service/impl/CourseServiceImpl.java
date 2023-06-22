@@ -47,8 +47,7 @@ public class CourseServiceImpl implements CourseService {
 
     //Store thumbnail
     if (courseRequestDTO.getThumbnail() != null){
-      String fileName = storageService.uploadFile(courseRequestDTO.getThumbnail());
-      course.setThumbnail(storageService.getFile(fileName).getMediaLink());
+      course.setThumbnail(storageService.uploadFile(courseRequestDTO.getThumbnail()));
     }
 
     Course courseSaved = courseRepository.save(course);
@@ -89,8 +88,7 @@ public class CourseServiceImpl implements CourseService {
 
     //Store thumbnail
     if (courseRequestDTO.getThumbnail() != null){
-      String fileName = storageService.uploadFile(courseRequestDTO.getThumbnail());
-      course.setThumbnail(storageService.getFile(fileName).getMediaLink());
+      course.setThumbnail(storageService.uploadFile(courseRequestDTO.getThumbnail()));
     }
 
     Course courseSaved = courseRepository.save(course);

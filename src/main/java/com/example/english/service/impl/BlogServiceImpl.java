@@ -31,8 +31,7 @@ public class BlogServiceImpl implements BlogService {
     Blog blog = BlogMapper.INSTANCE.blogRequestDTOToBlog(blogRequestDTO);
 
     if (blogRequestDTO.getImage() != null) {
-      String fileName = storageService.uploadFile(blogRequestDTO.getImage());
-      blog.setImage(storageService.getFile(fileName).getMediaLink());
+      blog.setImage(storageService.uploadFile(blogRequestDTO.getImage()));
     }
 
     blog.setUser(user);
@@ -57,8 +56,7 @@ public class BlogServiceImpl implements BlogService {
     }
 
     if (blogRequestDTO.getImage() != null) {
-      String fileName = storageService.uploadFile(blogRequestDTO.getImage());
-      blog.setImage(storageService.getFile(fileName).getMediaLink());
+      blog.setImage(storageService.uploadFile(blogRequestDTO.getImage()));
     }
 
     BlogResponseDTO blogResponseDTO = BlogMapper.INSTANCE.blogToBlogResponseDTO(blogRepository.save(blog));

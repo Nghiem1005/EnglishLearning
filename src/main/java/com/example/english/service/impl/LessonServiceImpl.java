@@ -53,8 +53,7 @@ public class LessonServiceImpl implements LessonService {
     lesson.setCourse(course);
 
     if (lessonRequestDTO.getVideo() != null){
-      String nameFile = storageService.uploadFile(lessonRequestDTO.getVideo());
-      lesson.setVideo(nameFile);
+      lesson.setVideo(storageService.uploadFile(lessonRequestDTO.getVideo()));
     }
 
     //Check serial greater previous serial and consecutive
@@ -80,8 +79,7 @@ public class LessonServiceImpl implements LessonService {
     //lesson.setDocument(lessonRequestDTO.getDocument());
 
     if (lessonRequestDTO.getVideo() != null){
-      String nameFile = storageService.uploadFile(lessonRequestDTO.getVideo());
-      lesson.setVideo(nameFile);
+      lesson.setVideo(storageService.uploadFile(lessonRequestDTO.getVideo()));
     }
 
     LessonResponseDTO lessonResponseDTO = LessonMapper.INSTANCE.lessonToLessonResponseDTO(lessonRepository.save(lesson));

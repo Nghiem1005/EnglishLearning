@@ -47,9 +47,9 @@ public class StorageServiceImpl implements StorageService {
 
     String name = generateFileName(file);
 
-    bucket.create(name, file.getBytes(), file.getContentType());
+    Blob blob = bucket.create(name, file.getBytes(), file.getContentType());
 
-    return name;
+    return "https://storage.googleapis.com/englishlearningweb.appspot.com/" + blob.getName();
   }
 
   @Override
