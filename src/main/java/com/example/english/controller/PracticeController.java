@@ -1,8 +1,6 @@
 package com.example.english.controller;
 
-import com.example.english.dto.request.ContestRequestDTO;
 import com.example.english.dto.request.PracticeRequestDTO;
-import com.example.english.service.ContestService;
 import com.example.english.service.PracticeService;
 import java.io.IOException;
 import org.springframework.beans.factory.annotation.Autowired;
