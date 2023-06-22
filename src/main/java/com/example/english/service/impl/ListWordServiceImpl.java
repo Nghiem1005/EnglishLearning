@@ -4,6 +4,7 @@ import com.example.english.dto.request.ListWordRequestDTO;
 import com.example.english.dto.request.WordRequestDTO;
 import com.example.english.dto.response.ListWordResponseDTO;
 import com.example.english.dto.response.ResponseObject;
+import com.example.english.dto.response.UserResponseDTO;
 import com.example.english.dto.response.WordResponseDTO;
 import com.example.english.entities.ListWord;
 import com.example.english.entities.User;
@@ -11,6 +12,7 @@ import com.example.english.entities.Word;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.ListWordMapper;
+import com.example.english.mapper.UsersMapper;
 import com.example.english.mapper.WordMapper;
 import com.example.english.repository.ListWordRepository;
 import com.example.english.repository.UserRepository;
@@ -88,6 +90,9 @@ public class ListWordServiceImpl implements ListWordService {
     }
     listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
 
+    UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(listWord.getUser());
+    listWordResponseDTO.setUserResponseDTO(userResponseDTO);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTO));
   }
 
@@ -100,8 +105,12 @@ public class ListWordServiceImpl implements ListWordService {
     for (ListWord listWord : listWords) {
       ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWord);
 
+      UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(user);
+      listWordResponseDTO.setUserResponseDTO(userResponseDTO);
+
       listWordResponseDTOS.add(listWordResponseDTO);
     }
+
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTOS));
   }
 
