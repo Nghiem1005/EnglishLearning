@@ -28,7 +28,7 @@ public class ListWord {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull(message = "Part content is required")
+  @NotNull(message = "Name list word is required")
   private String name;
 
   private String description;

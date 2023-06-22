@@ -43,25 +43,28 @@ public class ListWordServiceImpl implements ListWordService {
     listWord.setUser(user);
 
     ListWord listWordSaved = listWordRepository.save(listWord);
-
     List<WordResponseDTO> wordResponseDTOS = new ArrayList<>();
-    try{
-      //Create word of list word
-      for (WordRequestDTO wordRequestDTO : listWordRequestDTO.getWordRequestDTOS()) {
-        Word word = WordMapper.INSTANCE.wordRequestDTOToWord(wordRequestDTO);
+    if (listWordRequestDTO.getWordRequestDTOS() != null) {
 
-        if (wordRequestDTO.getImage() != null) {
-          word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
+      try{
+        //Create word of list word
+        for (WordRequestDTO wordRequestDTO : listWordRequestDTO.getWordRequestDTOS()) {
+          Word word = WordMapper.INSTANCE.wordRequestDTOToWord(wordRequestDTO);
+
+          if (wordRequestDTO.getImage() != null) {
+            word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
+          }
+
+          word.setListWord(listWordSaved);
+          WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(wordRepository.save(word));
+          wordResponseDTOS.add(wordResponseDTO);
         }
-
-        word.setListWord(listWordSaved);
-        WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(wordRepository.save(word));
-        wordResponseDTOS.add(wordResponseDTO);
+      } catch (Exception e) {
+        listWordRepository.delete(listWordSaved);
+        throw new BadRequestException(e.getMessage());
       }
-    } catch (Exception e) {
-      listWordRepository.delete(listWordSaved);
-      throw new BadRequestException(e.getMessage());
     }
+
 
     ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWordSaved);
     listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
