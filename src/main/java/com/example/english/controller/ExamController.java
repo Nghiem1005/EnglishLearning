@@ -18,13 +18,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ExamController {
   @Autowired private ExamService examService;
 
-  @PostMapping(value = "/student")
+  @PostMapping(value = "")
   public ResponseEntity<?> createExam(@RequestParam(name = "lessonId") Long lessonId, @ModelAttribute
   List<ExerciseRequestDTO> examRequestDTOS) throws IOException {
     return examService.createExam(lessonId, examRequestDTOS);
   }
 
-  @DeleteMapping (value = "/student")
+  @DeleteMapping (value = "")
   public ResponseEntity<?> deleteExam(@RequestParam(name = "lessonId") Long lessonId, @RequestParam(name = "partId") Long partId) throws IOException {
     return examService.deleteExam(lessonId, partId);
   }
