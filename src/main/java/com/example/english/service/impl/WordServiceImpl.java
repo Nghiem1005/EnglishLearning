@@ -26,27 +26,22 @@ public class WordServiceImpl implements WordService {
   @Autowired private WordRepository wordRepository;
   @Autowired private StorageService storageService;
   @Override
-  public ResponseEntity<?> addWord(Long listWordId, List<WordRequestDTO> wordRequestDTOS)
+  public ResponseEntity<?> addWord(Long listWordId, WordRequestDTO wordRequestDTO)
       throws IOException {
     ListWord listWord = listWordRepository.findById(listWordId).orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
 
-    List<WordResponseDTO> wordResponseDTOS = new ArrayList<>();
+    Word word = WordMapper.INSTANCE.wordRequestDTOToWord(wordRequestDTO);
 
-    //Create word
-    for (WordRequestDTO wordRequestDTO : wordRequestDTOS) {
-      Word word = WordMapper.INSTANCE.wordRequestDTOToWord(wordRequestDTO);
-
-      word.setListWord(listWord);
-      if (wordRequestDTO.getImage() != null) {
-        word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
-      }
-      Word wordSaved = wordRepository.save(word);
-
-      WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(wordSaved);
-
-      wordResponseDTOS.add(wordResponseDTO);
+    word.setListWord(listWord);
+    if (wordRequestDTO.getImage() != null) {
+      word.setImages(storageService.uploadFile(wordRequestDTO.getImage()));
     }
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add word to list word success", wordRequestDTOS));
+    Word wordSaved = wordRepository.save(word);
+
+    WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(wordSaved);
+
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add word to list word success", wordResponseDTO));
   }
 
   @Override

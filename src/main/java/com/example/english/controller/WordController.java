@@ -20,7 +20,7 @@ public class WordController {
   @Autowired private WordService wordService;
   @PostMapping(value = "")
   public ResponseEntity<?> addWord(@RequestParam(name = "listWordId") Long listWordId, @ModelAttribute
-      List<WordRequestDTO> wordRequestDTOS) throws IOException {
+      WordRequestDTO wordRequestDTOS) throws IOException {
     return wordService.addWord(listWordId, wordRequestDTOS);
   }
 
