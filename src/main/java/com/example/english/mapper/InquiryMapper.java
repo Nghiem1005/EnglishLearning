@@ -12,5 +12,10 @@ public interface InquiryMapper {
   InquiryMapper INSTANCE = Mappers.getMapper( InquiryMapper.class );
   @Mapping(target = "images", expression = "java(null)")
   Inquiry inquiryRequestDTOToInquiry(DiscussRequestDTO inquiry);
-  DiscussResponseDTO inquiryToInquiryResponseDTO(Inquiry inquiry);
+
+  @Mapping(target = "subjectId", source = "c.lesson.id")
+  @Mapping(target = "subjectName", source = "c.lesson.name")
+  @Mapping(target = "studentId", source = "c.user.id")
+  @Mapping(target = "studentName", source = "c.user.name")
+  DiscussResponseDTO inquiryToInquiryResponseDTO(Inquiry c);
 }

@@ -13,8 +13,8 @@ public class DiscussResponseDTO {
   private String content;
   private Long studentId;
   private String studentName;
-  private Long courseId;
-  private String courseName;
+  private Long subjectId;
+  private String subjectName;
   private Date createDate;
   private Date updateDate;
 }
