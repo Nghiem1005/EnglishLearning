@@ -56,7 +56,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     //Calculator price
     Optional<Discount> discount = discountRepository.findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(course, new Date(), new Date());
-    if (discount.get() != null) {
+    if (discount.isPresent()) {
       BigDecimal price = course.getPrice().multiply (
           BigDecimal.valueOf((100 - discount.get().getPercent()) / 100));
       bill.setPrice(price);
