@@ -34,8 +34,8 @@ public class ListWordController {
     return listWordService.getListWordById(pageable, id);
   }
 
-  @GetMapping(value = "{userId}")
-  public ResponseEntity<?> getListWordByUserId(@PathVariable(name = "userId") Long userId,
+  @GetMapping(value = "/user")
+  public ResponseEntity<?> getListWordByUser(@RequestParam(name = "userId") Long userId,
       @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,
       @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size) {
     Pageable pageable = PageRequest.of(page - 1, size);
