@@ -7,10 +7,12 @@ import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Answer;
 import com.example.english.entities.Part;
 import com.example.english.entities.Question;
+import com.example.english.entities.QuestionPhrase;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.QuestionMapper;
 import com.example.english.repository.AnswerRepository;
 import com.example.english.repository.PartRepository;
+import com.example.english.repository.QuestionPhraseRepository;
 import com.example.english.repository.QuestionRepository;
 import com.example.english.service.QuestionService;
 import com.example.english.service.StorageService;
@@ -25,30 +27,24 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class QuestionServiceImpl implements QuestionService {
-  @Autowired private PartRepository partRepository;
+  @Autowired private QuestionPhraseRepository questionPhraseRepository;
   @Autowired private static StorageService storageService;
   @Autowired private static QuestionRepository questionRepository;
   @Autowired private static AnswerRepository answerRepository;
 
   @Override
-  public ResponseEntity<?> addQuestion(Long partId, List<QuestionRequestDTO> questionRequestDTOS)
-      throws IOException {
-    Part part = partRepository.findById(partId).orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partId));
+  public ResponseEntity<?> addQuestion(Long questionPhraseId, QuestionRequestDTO questionRequestDTO) {
+    QuestionPhrase questionPhrase = questionPhraseRepository.findById(questionPhraseId).orElseThrow(() -> new ResourceNotFoundException("Could not find question phrase with ID = " + questionPhraseId));
 
-    List<QuestionResponseDTO> questionList = createQuestion(questionRequestDTOS, part);
+    QuestionResponseDTO questionList = createQuestion(questionRequestDTO, questionPhrase);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add question success", questionList));
   }
 
   @Override
-  public ResponseEntity<ResponseObject> updateQuestion(Long id, QuestionRequestDTO questionRequestDTO)
-      throws IOException {
+  public ResponseEntity<ResponseObject> updateQuestion(Long id, QuestionRequestDTO questionRequestDTO) {
     Question question = questionRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + id));;
 
     question.setContent(questionRequestDTO.getContent());
-
-    if (questionRequestDTO.getImage() != null) {
-      question.setImage(storageService.uploadFile(questionRequestDTO.getImage()));
-    }
 
     QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionRepository.save(question));
 
@@ -65,27 +61,33 @@ public class QuestionServiceImpl implements QuestionService {
         .body(new ResponseObject(HttpStatus.OK, "Delete question successfully!"));
   }
 
-  public static List<QuestionResponseDTO> createQuestion(List<QuestionRequestDTO> questionRequestDTOList, Part part)
+  public static List<QuestionResponseDTO> createListQuestion(List<QuestionRequestDTO> questionRequestDTOList, QuestionPhrase questionPhrase)
       throws IOException {
     List<QuestionResponseDTO> questionList = new ArrayList<>();
     for (QuestionRequestDTO questionRequestDTO : questionRequestDTOList) {
-      Question question = new Question();
-      question.setContent(questionRequestDTO.getContent());
-      question.setSerial(questionRequestDTO.getSerial());
+      QuestionResponseDTO questionResponseDTO = createQuestion(questionRequestDTO, questionPhrase);
 
-      if (questionRequestDTO.getImage() != null) {
-        question.setImage(storageService.uploadFile(questionRequestDTO.getImage()));
-      }
-
-      question.setPart(part);
-
-      Question questionSaved = questionRepository.save(question);
-
-      AnswerServiceImpl.createAnswer(questionRequestDTO.getAnswerRequestDTOS(), questionSaved);
-
-      questionList.add(QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionSaved));
+      questionList.add(questionResponseDTO);
     }
     return questionList;
+  }
+
+  public static QuestionResponseDTO createQuestion(QuestionRequestDTO questionRequestDTO, QuestionPhrase questionPhrase) {
+
+    Question question = new Question();
+    question.setContent(questionRequestDTO.getContent());
+    question.setSerial(questionRequestDTO.getSerial());
+
+    question.setQuestionPhrase(questionPhrase);
+
+    Question questionSaved = questionRepository.save(question);
+
+    List<AnswerResponseDTO> answerResponseDTOS = AnswerServiceImpl.createListAnswer(questionRequestDTO.getAnswerRequestDTOS(), questionSaved);
+
+    QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionSaved);
+    questionResponseDTO.setAnswerResponseDTOS(answerResponseDTOS);
+
+    return questionResponseDTO;
   }
 
   public static List<QuestionResponseDTO> convertQuestionToQuestionResponse(List<Question> questions) {

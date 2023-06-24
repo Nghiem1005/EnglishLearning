@@ -1,6 +1,6 @@
 package com.example.english.service.impl;
 
-import com.example.english.dto.request.ExerciseRequestDTO;
+import com.example.english.dto.request.PartRequestDTO;
 import com.example.english.dto.request.PracticeRequestDTO;
 import com.example.english.dto.response.PartResponseDTO;
 import com.example.english.dto.response.PracticeResponseDTO;
@@ -17,6 +17,7 @@ import com.example.english.mapper.PartMapper;
 import com.example.english.mapper.PracticeMapper;
 import com.example.english.mapper.UsersMapper;
 import com.example.english.repository.PartRepository;
+import com.example.english.repository.PracticeDetailRepository;
 import com.example.english.repository.PracticeRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.PracticeService;
@@ -34,50 +35,31 @@ public class PracticeServiceImpl implements PracticeService {
   @Autowired private StorageService storageService;
   @Autowired private PartRepository partRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired private PracticeDetailRepository practiceDetailRepository;
   @Override
   public ResponseEntity<?> createPractice(Long userId, PracticeRequestDTO practiceRequestDTO) {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
 
     Practice practice = PracticeMapper.INSTANCE.practiceRequestDTOToPractice(practiceRequestDTO);
 
-    Practice practiceSaved = practiceRepository.save(practice);
-
+    //Add parts to practice
     List<PartResponseDTO> partResponseDTOS = new ArrayList<>();
-    try{
-      //Create contest detail
-      for (ExerciseRequestDTO requestDTO : practiceRequestDTO.getExerciseRequestDTOS()) {
-        //Create part
-        Part part = new Part();
-        part.setDescription(requestDTO.getDescription());
+    for (Long partId: practiceRequestDTO.getPart()) {
+      Part part = partRepository.findById(partId).orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partId));
 
-        part.setType(PartType.valueOf(requestDTO.getType()));
+      //Create practice detail
+      PracticeDetail practiceDetail = new PracticeDetail();
+      practiceDetail.setPart(part);
+      practiceDetail.setPractice(practice);
+      practiceDetailRepository.save(practiceDetail);
 
-        if (requestDTO.getDocument() != null){
-          part.setDocument(storageService.uploadFile(requestDTO.getDocument()));
-        }
-
-        Part partSaved = partRepository.save(part);
-
-        List<QuestionResponseDTO> questionResponseDTOS = QuestionServiceImpl.createQuestion(requestDTO.getQuestionRequestDTOS(), partSaved);
-
-        PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(partSaved);
-        partResponseDTO.setQuestionResponseDTOS(questionResponseDTOS);
-        partResponseDTO.setSerial(requestDTO.getSerial());
-
-        partResponseDTOS.add(partResponseDTO);
-
-        //Create practice detail
-        PracticeDetail practiceDetail = new PracticeDetail();
-        practiceDetail.setPart(partSaved);
-        practiceDetail.setSerial(requestDTO.getSerial());
-        practiceDetail.setPractice(practice);
-      }
-    } catch (Exception e) {
-      practiceRepository.delete(practice);
-      throw new BadRequestException(e.getMessage());
+      //Return part response
+      PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(part);
+      partResponseDTOS.add(partResponseDTO);
     }
 
-    PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practice);
+    Practice practiceSaved = practiceRepository.save(practice);
+    PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practiceSaved);
     practiceResponseDTO.setPartResponseDTOS(partResponseDTOS);
     practiceResponseDTO.setUserResponseDTO(UsersMapper.MAPPER.userToUserResponseDTO(user));
 
@@ -97,9 +79,9 @@ public class PracticeServiceImpl implements PracticeService {
       practice.setPeriod(practiceRequestDTO.getPeriod());
     }
 
-    if (practiceRequestDTO.getResult() != null) {
+    /*if (practiceRequestDTO.getResult() != null) {
       practice.setResult(practiceRequestDTO.getResult());
-    }
+    }*/
 
     PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practiceRepository.save(practice));
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update result practice success", practiceResponseDTO));

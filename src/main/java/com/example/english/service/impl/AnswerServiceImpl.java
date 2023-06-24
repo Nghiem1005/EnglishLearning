@@ -25,11 +25,11 @@ public class AnswerServiceImpl implements AnswerService {
   @Autowired private QuestionRepository questionRepository;
 
   @Override
-  public ResponseEntity<?> addAnswer(Long questionId, List<AnswerRequestDTO> answerRequestDTOS) {
+  public ResponseEntity<?> addAnswer(Long questionId, AnswerRequestDTO answerRequestDTO) {
     Question  question = questionRepository.findById(questionId).orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + questionId));
 
-    List<AnswerResponseDTO> answerList = createAnswer(answerRequestDTOS, question);
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add answer success", answerList));
+    AnswerResponseDTO answerResponseDTO = createAnswer(answerRequestDTO, question);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add answer success", answerResponseDTO));
   }
 
   @Override
@@ -56,22 +56,27 @@ public class AnswerServiceImpl implements AnswerService {
         .body(new ResponseObject(HttpStatus.OK, "Delete answer successfully!"));
   }
 
-  public static List<AnswerResponseDTO> createAnswer(List<AnswerRequestDTO> answerRequestDTOList, Question question) {
+  public static List<AnswerResponseDTO> createListAnswer(List<AnswerRequestDTO> answerRequestDTOList, Question question) {
     List<AnswerResponseDTO> answerList = new ArrayList<>();
 
     for (AnswerRequestDTO answerRequestDTO : answerRequestDTOList) {
-      Answer answer = new Answer();
-      answer.setContent(answerRequestDTO.getContent());
-      answer.setCorrect(answerRequestDTO.isCorrect());
-      answer.setSerial(answerRequestDTO.getSerial());
-
-      answer.setQuestion(question);
-
-      Answer answerSaved = answerRepository.save(answer);
-
-      answerList.add(AnswerMapper.INSTANCE.answerToAnswerResponseDTO(answerSaved));
+      answerList.add(createAnswer(answerRequestDTO, question));
     }
     return answerList;
+  }
+
+  public static AnswerResponseDTO createAnswer(AnswerRequestDTO answerRequestDTO, Question question) {
+    Answer answer = new Answer();
+    answer.setContent(answerRequestDTO.getContent());
+    answer.setCorrect(answerRequestDTO.isCorrect());
+    answer.setSerial(answerRequestDTO.getSerial());
+
+    answer.setQuestion(question);
+
+    Answer answerSaved = answerRepository.save(answer);
+
+    AnswerResponseDTO answerResponseDTO = AnswerMapper.INSTANCE.answerToAnswerResponseDTO(answerSaved);
+    return answerResponseDTO;
   }
 
   public static List<AnswerResponseDTO> convertAnswerToAnswerResponse(List<Answer> answers) {

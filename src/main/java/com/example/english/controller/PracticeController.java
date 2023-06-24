@@ -20,7 +20,7 @@ public class PracticeController {
   private PracticeService practiceService;
 
   @PostMapping(value = "")
-  public ResponseEntity<?> createPractice(@RequestParam(name = "userId") Long userId,@ModelAttribute PracticeRequestDTO practiceRequestDTO) {
+  public ResponseEntity<?> createPractice(@RequestParam(name = "userId") Long userId,@RequestBody PracticeRequestDTO practiceRequestDTO) {
     return practiceService.createPractice(userId, practiceRequestDTO);
   }
 

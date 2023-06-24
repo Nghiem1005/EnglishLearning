@@ -1,16 +1,20 @@
 package com.example.english.service.impl;
 
-import com.example.english.dto.request.ExerciseRequestDTO;
+import com.example.english.dto.request.ExamRequestDTO;
+import com.example.english.dto.request.PartRequestDTO;
 import com.example.english.dto.response.ExamResponseDTO;
 import com.example.english.dto.response.PartResponseDTO;
+import com.example.english.dto.response.QuestionPhraseResponseDTO;
 import com.example.english.dto.response.QuestionResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Exam;
 import com.example.english.entities.Lesson;
 import com.example.english.entities.Part;
+import com.example.english.entities.enums.ExamType;
 import com.example.english.entities.enums.PartType;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
+import com.example.english.mapper.ExamMapper;
 import com.example.english.mapper.PartMapper;
 import com.example.english.repository.AnswerRepository;
 import com.example.english.repository.ExamRepository;
@@ -36,66 +40,61 @@ public class ExamServiceImpl implements ExamService {
   @Autowired private PartRepository partRepository;
   @Autowired private StorageService storageService;
   @Override
-  public ResponseEntity<?> createExam(Long lessonId, List<ExerciseRequestDTO> examRequestDTOS)
-      throws IOException {
-    Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
+  public ResponseEntity<?> createExam(ExamRequestDTO examRequestDTO) {
+    Exam exam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
+    Exam examSaved = examRepository.save(exam);
+    /*exam.setName(examRequestDTO.getName());
+    exam.setPeriod(examRequestDTO.getPeriod());
+    exam.setType(ExamType.valueOf(examRequestDTO.getType()));*/
 
-    List<ExamResponseDTO> examResponseDTOS = new ArrayList<>();
+
+    List<PartResponseDTO> partResponseDTOS = new ArrayList<>();
     try{
-      //Create exam
-      for (ExerciseRequestDTO requestDTO : examRequestDTOS) {
-        //Create part
+      //Create part
+      for (PartRequestDTO partRequestDTO : examRequestDTO.getPartRequestDTOS()) {
         Part part = new Part();
-        part.setDescription(requestDTO.getDescription());
+        part.setDescription(partRequestDTO.getDescription());
 
-        part.setType(PartType.valueOf(requestDTO.getType()));
+        part.setType(PartType.valueOf(partRequestDTO.getType()));
 
-        if (requestDTO.getDocument() != null){
-          part.setDocument(storageService.uploadFile(requestDTO.getDocument()));
-        }
+        part.setExam(examSaved);
 
         Part partSaved = partRepository.save(part);
 
-        List<QuestionResponseDTO> questionResponseDTOS = QuestionServiceImpl.createQuestion(requestDTO.getQuestionRequestDTOS(), partSaved);
+        List<QuestionPhraseResponseDTO> questionResponseDTOS = QuestionPhraseServiceImpl.createQuestionPhrase(partRequestDTO.getQuestionPhraseRequestDTOS(), partSaved);
 
         PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(partSaved);
-        partResponseDTO.setQuestionResponseDTOS(questionResponseDTOS);
-        partResponseDTO.setSerial(requestDTO.getSerial());
+        partResponseDTO.setQuestionPhraseResponseDTOS(questionResponseDTOS);
 
-        //Create exam
-        Exam exam = new Exam();
-        exam.setPart(partSaved);
-        exam.setLesson(lesson);
-        exam.setSerial(requestDTO.getSerial());
+        //Calculator serial
+        partResponseDTO.setSerial(examRequestDTO.getPartRequestDTOS().indexOf(partRequestDTO));
 
-        ExamResponseDTO examResponseDTO = new ExamResponseDTO();
-        examResponseDTO = examResponseDTO.build(exam);
-        examResponseDTO.setPartResponseDTO(partResponseDTO);
-
-        examResponseDTOS.add(examResponseDTO);
+        partResponseDTOS.add(partResponseDTO);
       }
     } catch (Exception e) {
-      List<Exam> examList = examRepository.findExamsByLesson(lesson);
-      for (Exam exam : examList) {
-        partRepository.delete(exam.getPart());
-        examRepository.delete(exam);
+      List<Part> partList = partRepository.findPartsByExam(examSaved);
+      for (Part part : partList) {
+        partRepository.delete(part);
       }
+      examRepository.delete(exam);
       throw new BadRequestException(e.getMessage());
     }
 
+    ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(exam);
+    examResponseDTO.setPartResponseDTOS(partResponseDTOS);
 
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam success", examResponseDTOS));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam success", examResponseDTO));
   }
 
   @Override
-  public ResponseEntity<?> deleteExam(Long lessonId, Long partId) {
-    Lesson lesson = lessonRepository.findById(lessonId).orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
+  public ResponseEntity<?> deleteExam(Long examId) {
+    Exam exam = examRepository.findById(examId) .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with exam ID = " + examId));
 
-    Part part = partRepository.findById(partId).orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partId));
-
-    Exam exam = examRepository.findExamsByLessonAndPart(lesson, part) .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with lesson ID = " + lessonId + " and part ID = " + partId));
-
+    List<Part> partList = partRepository.findPartsByExam(exam);
+    for (Part part : partList) {
+      partRepository.delete(part);
+    }
     examRepository.delete(exam);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Delete exam success"));
   }

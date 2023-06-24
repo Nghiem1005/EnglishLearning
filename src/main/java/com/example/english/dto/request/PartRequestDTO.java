@@ -9,10 +9,10 @@ import org.springframework.web.multipart.MultipartFile;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExerciseRequestDTO {
+public class PartRequestDTO {
  private String description;
  private String type;
  private MultipartFile document;
  private int serial;
- private List<QuestionRequestDTO> questionRequestDTOS;
+ private List<QuestionPhraseRequestDTO> questionPhraseRequestDTOS;
 }

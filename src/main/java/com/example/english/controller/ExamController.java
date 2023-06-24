@@ -1,6 +1,7 @@
 package com.example.english.controller;
 
-import com.example.english.dto.request.ExerciseRequestDTO;
+import com.example.english.dto.request.ExamRequestDTO;
+import com.example.english.dto.request.PartRequestDTO;
 import com.example.english.service.ExamService;
 import java.io.IOException;
 import java.util.List;
@@ -19,13 +20,12 @@ public class ExamController {
   @Autowired private ExamService examService;
 
   @PostMapping(value = "")
-  public ResponseEntity<?> createExam(@RequestParam(name = "lessonId") Long lessonId, @ModelAttribute
-  List<ExerciseRequestDTO> examRequestDTOS) throws IOException {
-    return examService.createExam(lessonId, examRequestDTOS);
+  public ResponseEntity<?> createExam(@ModelAttribute ExamRequestDTO examRequestDTO) {
+    return examService.createExam(examRequestDTO);
   }
 
   @DeleteMapping (value = "")
-  public ResponseEntity<?> deleteExam(@RequestParam(name = "lessonId") Long lessonId, @RequestParam(name = "partId") Long partId) throws IOException {
-    return examService.deleteExam(lessonId, partId);
+  public ResponseEntity<?> deleteExam(@RequestParam(name = "examId") Long examId) throws IOException {
+    return examService.deleteExam(examId);
   }
 }

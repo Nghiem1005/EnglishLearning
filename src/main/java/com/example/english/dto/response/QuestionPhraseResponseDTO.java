@@ -8,10 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PartResponseDTO {
+public class QuestionPhraseResponseDTO {
   private Long id;
   private int serial;
-  private String description;
-  private String type;
-  private List<QuestionPhraseResponseDTO> questionPhraseResponseDTOS;
+  private List<String> document;
+  private List<QuestionResponseDTO> questionResponseDTOS;
 }

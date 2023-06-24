@@ -8,8 +8,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PracticeRequestDTO {
+public class ExamRequestDTO {
   private String name;
   private int period;
-  private List<Long> part;
+  private String type;
+  private List<PartRequestDTO> partRequestDTOS;
 }

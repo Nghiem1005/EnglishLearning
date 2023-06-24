@@ -21,8 +21,8 @@ public class AnswerController {
   @Autowired
   private AnswerService answerService;
   @PostMapping(value = "")
-  public ResponseEntity<?> addAnswer(@ModelAttribute List<AnswerRequestDTO> answerRequestDTOS, @RequestParam(name = "questionId") Long questionId) {
-    return answerService.addAnswer(questionId, answerRequestDTOS);
+  public ResponseEntity<?> addAnswer(@RequestBody AnswerRequestDTO answerRequestDTO, @RequestParam(name = "questionId") Long questionId) {
+    return answerService.addAnswer(questionId, answerRequestDTO);
   }
 
   @PutMapping(value = "")

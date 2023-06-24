@@ -32,6 +32,6 @@ public class Question {
   private int serial = 1;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "part_id")
-  private Part part;
+  @JoinColumn(name = "question_phrase_id")
+  private QuestionPhrase questionPhrase;
 }

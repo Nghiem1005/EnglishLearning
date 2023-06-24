@@ -6,7 +6,7 @@ import java.util.List;
 import org.springframework.http.ResponseEntity;
 
 public interface QuestionService {
-  ResponseEntity<?> addQuestion(Long partId, List<QuestionRequestDTO> questionRequestDTOS)
+  ResponseEntity<?> addQuestion(Long questionPhraseId, QuestionRequestDTO questionRequestDTO)
       throws IOException;
 
   ResponseEntity<?> updateQuestion(Long id, QuestionRequestDTO questionRequestDTO)

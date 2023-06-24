@@ -10,7 +10,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, Long> {
-  List<Exam> findExamsByLesson(Lesson lesson);
 
-  Optional<Exam> findExamsByLessonAndPart(Lesson lesson, Part part);
 }

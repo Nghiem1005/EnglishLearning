@@ -20,8 +20,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuestionController {
   @Autowired private QuestionService questionService;
   @PostMapping(value = "")
-  public ResponseEntity<?> addQuestion(@ModelAttribute List<QuestionRequestDTO> questionRequestDTOS, @RequestParam(name = "partId") Long partId) throws IOException {
-    return questionService.addQuestion(partId, questionRequestDTOS);
+  public ResponseEntity<?> addQuestion(@RequestBody QuestionRequestDTO questionRequestDTO, @RequestParam(name = "questionPhraseId") Long questionPhraseId) throws IOException {
+    return questionService.addQuestion(questionPhraseId, questionRequestDTO);
   }
 
   @PutMapping(value = "")
