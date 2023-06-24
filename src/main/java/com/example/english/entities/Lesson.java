@@ -52,6 +52,10 @@ public class Lesson {
   @JoinColumn(name = "course_id")
   private Course course;
 
+  @ManyToOne
+  @JoinColumn(name = "practice_id")
+  private Practice practice;
+
   @CreationTimestamp
   private Date createDate;
 
@@ -61,8 +65,4 @@ public class Lesson {
   @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Inquiry> inquiries = new ArrayList<>();
-
-  @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<Exam> exams = new ArrayList<>();
 }

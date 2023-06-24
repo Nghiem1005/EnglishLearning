@@ -34,10 +34,14 @@ public class Part {
   @NotNull(message = "Part description is required")
   private String description;
 
+  private int serial = 1;
+
   @Enumerated(EnumType.STRING)
   private PartType type;
 
-  private String document;
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "exam_id")
+  private Exam exam;
 
   @CreationTimestamp
   private Date createDate;

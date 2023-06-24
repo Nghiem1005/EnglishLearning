@@ -36,6 +36,8 @@ public class Blog {
 
   private String image;
 
+  private String description;
+
   @CreationTimestamp
   private Date createDate;
 

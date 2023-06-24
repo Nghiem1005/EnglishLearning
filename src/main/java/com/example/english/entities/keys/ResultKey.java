@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public class ResultKey implements Serializable {
-  private Long user;
+  private Long practice;
   private Long question;
 
   @Override
@@ -16,12 +16,12 @@ public class ResultKey implements Serializable {
       return false;
     }
     ResultKey resultKey = (ResultKey) o;
-    return Objects.equals(user, resultKey.user) && Objects.equals(question,
+    return Objects.equals(practice, resultKey.practice) && Objects.equals(question,
         resultKey.question);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(user, question);
+    return Objects.hash(practice, question);
   }
 }

@@ -30,8 +30,8 @@ public class Result {
 
   @Id
   @ManyToOne(optional = false)
-  @JoinColumn(name = "user_id")
-  private User user;
+  @JoinColumn(name = "practice_id")
+  private Practice practice;
 
   @NotNull(message = "Question choice is required")
   private int choice;
