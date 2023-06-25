@@ -106,6 +106,9 @@ public class BlogServiceImpl implements BlogService {
     List<BlogResponseDTO> blogResponseDTOS = new ArrayList<>();
     for (Blog blog : blogList) {
       BlogResponseDTO blogResponseDTO = BlogMapper.INSTANCE.blogToBlogResponseDTO(blog);
+
+      //Get user is creater of blog
+      blogResponseDTO.setUserResponseDTO(UsersMapper.MAPPER.userToUserResponseDTO(blog.getUser()));
       blogResponseDTOS.add(blogResponseDTO);
     }
     return blogResponseDTOS;
