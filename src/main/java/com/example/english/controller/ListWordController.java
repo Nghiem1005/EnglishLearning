@@ -1,5 +1,6 @@
 package com.example.english.controller;
 
+import com.example.english.dto.request.DiscountRequestDTO;
 import com.example.english.dto.request.ListWordRequestDTO;
 import com.example.english.service.ListWordService;
 import com.example.english.utils.Utils;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,6 +28,11 @@ public class ListWordController {
   public ResponseEntity<?> createListWord(@RequestParam(name = "userId") Long userId,
       @ModelAttribute ListWordRequestDTO listWordRequestDTO) throws IOException {
     return listWordService.createListWord(userId, listWordRequestDTO);
+  }
+
+  @PutMapping
+  public ResponseEntity<?> updateListWord(@RequestParam(name = "listWordId") Long listWordId, @RequestBody ListWordRequestDTO listWordRequestDTO) {
+    return listWordService.updateListWord(listWordId, listWordRequestDTO);
   }
 
   @GetMapping(value = "{id}")

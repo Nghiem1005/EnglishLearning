@@ -76,6 +76,21 @@ public class ListWordServiceImpl implements ListWordService {
   }
 
   @Override
+  public ResponseEntity<?> updateListWord(Long listWordId, ListWordRequestDTO listWordRequestDTO) {
+    ListWord listWord = listWordRepository.findById(listWordId).orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
+
+    if (listWordRequestDTO.getName() != null) {
+      listWord.setName(listWordRequestDTO.getName());
+    }
+
+    if (listWordRequestDTO.getDescription() != null) {
+      listWord.setDescription(listWordRequestDTO.getDescription());
+    }
+    ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWordRepository.save(listWord));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create list word success", listWordResponseDTO));
+  }
+
+  @Override
   public ResponseEntity<?> getListWordById(Pageable pageable, Long listWordId) {
     ListWord listWord = listWordRepository.findById(listWordId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
