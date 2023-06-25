@@ -11,5 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class BlogRequestDTO {
   private String title;
   private String content;
+  private String description;
   private MultipartFile image;
 }

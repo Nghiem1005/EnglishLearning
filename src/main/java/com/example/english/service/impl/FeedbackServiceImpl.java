@@ -110,15 +110,17 @@ public class FeedbackServiceImpl implements FeedbackService {
       List<String> nameFiles = Utils.storeFile(feedbackRequestDTO.getImages());
       feedback.setImages(nameFiles);
     }
-
+    DiscussResponseDTO feedbackMainResponseDTO = new DiscussResponseDTO();
     if (feedbackRequestDTO.getMainDiscuss() != null) {
       Feedback feedbackMain = feedbackRepository.findById(feedbackRequestDTO.getMainDiscuss())
           .orElseThrow(() -> new ResourceNotFoundException("Could not find feedback with ID = " + feedbackRequestDTO.getMainDiscuss()));
       feedback.setMainFeedback(feedbackMain);
+      feedbackMainResponseDTO = FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedback);
     }
 
     Feedback feedbackSaved = feedbackRepository.save(feedback);
     DiscussResponseDTO feedbackResponseDTO = FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedbackSaved);
+    feedbackResponseDTO.setMainDiscuss(feedbackMainResponseDTO);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ResponseObject(HttpStatus.OK, "Create feedback successfully!", feedbackResponseDTO));
@@ -132,6 +134,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     feedback.setContent(content);
     Feedback feedbackSaved = feedbackRepository.save(feedback);
     DiscussResponseDTO feedbackResponseDTO = FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedbackSaved);
+    if (feedback.getMainFeedback() != null) {
+      feedbackResponseDTO.setMainDiscuss(FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedback.getMainFeedback()));
+    }
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ResponseObject(HttpStatus.OK, "Update feedback successfully!", feedbackResponseDTO));

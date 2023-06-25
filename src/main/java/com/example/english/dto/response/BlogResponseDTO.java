@@ -12,6 +12,7 @@ public class BlogResponseDTO {
  private Long id;
  private String title;
  private String content;
+ private String description;
  private String image;
  private Date createDate;
  private Date updateDate;

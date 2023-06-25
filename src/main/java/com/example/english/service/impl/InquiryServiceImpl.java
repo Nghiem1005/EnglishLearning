@@ -51,9 +51,6 @@ public class InquiryServiceImpl implements InquiryService {
     List<DiscussResponseDTO> inquiryResponseDTOList = new ArrayList<>();
     for (Inquiry inquiry : inquiryList) {
       DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry);
-      if (inquiry.getMainInquiry() != null) {
-        inquiryResponseDTO.setMainDiscuss(InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry.getMainInquiry()));
-      }
       inquiryResponseDTOList.add(inquiryResponseDTO);
     }
 
@@ -77,16 +74,20 @@ public class InquiryServiceImpl implements InquiryService {
       inquiry.setImages(nameFiles);
     }
 
+    DiscussResponseDTO inquiryMainResponseDTO = new DiscussResponseDTO();
     //Get main inquiry
     if (inquiryRequestDTO.getMainDiscuss() != null) {
       Inquiry inquiryMain = inquiryRepository.findById(inquiryRequestDTO.getMainDiscuss())
           .orElseThrow(() -> new ResourceNotFoundException("Could not find inquiry with ID = " + inquiryRequestDTO.getMainDiscuss()));
       inquiry.setMainInquiry(inquiryMain);
+
+      inquiryMainResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiryMain);
     }
 
 
     Inquiry inquirySaved = inquiryRepository.save(inquiry);
     DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquirySaved);
+    inquiryResponseDTO.setMainDiscuss(inquiryMainResponseDTO);
 
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ResponseObject(HttpStatus.OK, "Create inquiry successfully!", inquiryResponseDTO));
@@ -99,10 +100,15 @@ public class InquiryServiceImpl implements InquiryService {
     inquiry.setId(id);
     inquiry.setContent(content);
     Inquiry inquirySaved = inquiryRepository.save(inquiry);
-    DiscussResponseDTO feedbackResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquirySaved);
+    DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquirySaved);
+
+    //Get main inquiry
+    if (inquiry.getMainInquiry() != null) {
+      inquiryResponseDTO.setMainDiscuss(InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry.getMainInquiry()));
+    }
 
     return ResponseEntity.status(HttpStatus.OK)
-        .body(new ResponseObject(HttpStatus.OK, "Update inquiry successfully!", feedbackResponseDTO));
+        .body(new ResponseObject(HttpStatus.OK, "Update inquiry successfully!", inquiryResponseDTO));
   }
 
   @Override

@@ -58,7 +58,7 @@ public class WordServiceImpl implements WordService {
     }
 
     if (wordRequestDTO.getExample() != null) {
-      word.setDefine(wordRequestDTO.getExample());
+      word.setExample(wordRequestDTO.getExample());
     }
 
     if (wordRequestDTO.getImage() != null) {

@@ -84,7 +84,8 @@ public class ListWordServiceImpl implements ListWordService {
 
     //Get word of list word
     List<WordResponseDTO> wordResponseDTOS = new ArrayList<>();
-    List<Word> words = wordRepository.findWordsByListWord(pageable, listWord).getContent();
+    Page<Word> wordPage = wordRepository.findWordsByListWord(pageable, listWord);
+    List<Word> words = wordPage.getContent();
     for (Word word : words) {
       WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(word);
       wordResponseDTOS.add(wordResponseDTO);
@@ -94,14 +95,14 @@ public class ListWordServiceImpl implements ListWordService {
     UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(listWord.getUser());
     listWordResponseDTO.setUserResponseDTO(userResponseDTO);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTO));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTO, wordPage.getTotalPages()));
   }
 
   @Override
   public ResponseEntity<?> getListWordByUser(Pageable pageable, Long userId) {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
-
-    List<ListWord> listWords = listWordRepository.findListWordsByUser(pageable, user).getContent();
+    Page<ListWord> listWordPage = listWordRepository.findListWordsByUser(pageable, user);
+    List<ListWord> listWords = listWordPage.getContent();
     List<ListWordResponseDTO> listWordResponseDTOS = new ArrayList<>();
     for (ListWord listWord : listWords) {
       ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWord);
@@ -112,7 +113,7 @@ public class ListWordServiceImpl implements ListWordService {
       listWordResponseDTOS.add(listWordResponseDTO);
     }
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTOS));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTOS, listWordPage.getTotalPages()));
   }
 
   @Override
