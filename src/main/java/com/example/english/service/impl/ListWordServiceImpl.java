@@ -6,6 +6,7 @@ import com.example.english.dto.response.ListWordResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.dto.response.UserResponseDTO;
 import com.example.english.dto.response.WordResponseDTO;
+import com.example.english.entities.Blog;
 import com.example.english.entities.ListWord;
 import com.example.english.entities.User;
 import com.example.english.entities.Word;
@@ -112,6 +113,14 @@ public class ListWordServiceImpl implements ListWordService {
     }
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get list word success", listWordResponseDTOS));
+  }
+
+  @Override
+  public ResponseEntity<?> deleteListWord(Long listWordId) {
+    ListWord listWord = listWordRepository.findById(listWordId).orElseThrow(() -> new ResourceNotFoundException("Could not find list word with ID = " + listWordId));
+
+    listWordRepository.delete(listWord);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Delete list word success!"));
   }
 
   /*@Override

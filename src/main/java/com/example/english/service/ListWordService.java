@@ -9,4 +9,5 @@ public interface ListWordService {
   ResponseEntity<?> createListWord(Long userId, ListWordRequestDTO listWordRequestDTO) throws IOException;
   ResponseEntity<?> getListWordById(Pageable pageable, Long listWordId);
   ResponseEntity<?> getListWordByUser(Pageable pageable, Long userId);
+  ResponseEntity<?> deleteListWord(Long listWordId);
 }
