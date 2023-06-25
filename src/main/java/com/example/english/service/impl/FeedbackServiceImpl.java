@@ -5,6 +5,7 @@ import com.example.english.dto.response.DiscussResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Course;
 import com.example.english.entities.Feedback;
+import com.example.english.entities.Inquiry;
 import com.example.english.entities.StudentCourse;
 import com.example.english.entities.User;
 import com.example.english.exceptions.ResourceNotFoundException;
@@ -77,6 +78,9 @@ public class FeedbackServiceImpl implements FeedbackService {
     List<DiscussResponseDTO> feedbackResponseDTOList = new ArrayList<>();
     for (Feedback feedback : feedbackList) {
       DiscussResponseDTO feedbackResponseDTO = FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedback);
+      if (feedback.getMainFeedback() != null) {
+        feedbackResponseDTO.setMainDiscuss(FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedback.getMainFeedback()));
+      }
       feedbackResponseDTOList.add(feedbackResponseDTO);
     }
 
@@ -105,6 +109,12 @@ public class FeedbackServiceImpl implements FeedbackService {
     if (feedbackRequestDTO.getImages() != null){
       List<String> nameFiles = Utils.storeFile(feedbackRequestDTO.getImages());
       feedback.setImages(nameFiles);
+    }
+
+    if (feedbackRequestDTO.getMainDiscuss() != null) {
+      Feedback feedbackMain = feedbackRepository.findById(feedbackRequestDTO.getMainDiscuss())
+          .orElseThrow(() -> new ResourceNotFoundException("Could not find feedback with ID = " + feedbackRequestDTO.getMainDiscuss()));
+      feedback.setMainFeedback(feedbackMain);
     }
 
     Feedback feedbackSaved = feedbackRepository.save(feedback);
@@ -142,6 +152,10 @@ public class FeedbackServiceImpl implements FeedbackService {
     Feedback feedback = feedbackRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find feedback with ID = " + id));
     DiscussResponseDTO feedbackResponseDTO = FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedback);
+
+    if (feedback.getMainFeedback() != null) {
+      feedbackResponseDTO.setMainDiscuss(FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedback.getMainFeedback()));
+    }
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get feedback.", feedbackResponseDTO));
   }

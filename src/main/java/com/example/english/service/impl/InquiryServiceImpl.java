@@ -51,6 +51,9 @@ public class InquiryServiceImpl implements InquiryService {
     List<DiscussResponseDTO> inquiryResponseDTOList = new ArrayList<>();
     for (Inquiry inquiry : inquiryList) {
       DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry);
+      if (inquiry.getMainInquiry() != null) {
+        inquiryResponseDTO.setMainDiscuss(InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry.getMainInquiry()));
+      }
       inquiryResponseDTOList.add(inquiryResponseDTO);
     }
 
@@ -73,6 +76,14 @@ public class InquiryServiceImpl implements InquiryService {
       List<String> nameFiles = Utils.storeFile(inquiryRequestDTO.getImages());
       inquiry.setImages(nameFiles);
     }
+
+    //Get main inquiry
+    if (inquiryRequestDTO.getMainDiscuss() != null) {
+      Inquiry inquiryMain = inquiryRepository.findById(inquiryRequestDTO.getMainDiscuss())
+          .orElseThrow(() -> new ResourceNotFoundException("Could not find inquiry with ID = " + inquiryRequestDTO.getMainDiscuss()));
+      inquiry.setMainInquiry(inquiryMain);
+    }
+
 
     Inquiry inquirySaved = inquiryRepository.save(inquiry);
     DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquirySaved);
@@ -108,17 +119,19 @@ public class InquiryServiceImpl implements InquiryService {
   public ResponseEntity<?> getInquiryById(Long id) {
     Inquiry inquiry = inquiryRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find inquiry with ID = " + id));
-    DiscussResponseDTO feedbackResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry);
-
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get feedback.", feedbackResponseDTO));
+    DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry);
+    if (inquiry.getMainInquiry() != null) {
+      inquiryResponseDTO.setMainDiscuss(InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry.getMainInquiry()));
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get inquiry.", inquiryResponseDTO));
   }
 
   @Override
   public ResponseEntity<?> getInquiryByInquiryMain(Pageable pageable, Long inquiryMain) {
-    Inquiry getFeedbackMain = inquiryRepository.findById(inquiryMain)
+    Inquiry getInquiryMain = inquiryRepository.findById(inquiryMain)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find inquiry main with ID = " + inquiryMain));
 
-    Page<Inquiry> getInquiryList = inquiryRepository.findInquiriesByMainInquiry(pageable, getFeedbackMain);
+    Page<Inquiry> getInquiryList = inquiryRepository.findInquiriesByMainInquiry(pageable, getInquiryMain);
     List<Inquiry> inquiryList = getInquiryList.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListInquiryResponseDTO(inquiryList),

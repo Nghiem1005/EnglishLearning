@@ -17,4 +17,5 @@ public class DiscussResponseDTO {
   private String subjectName;
   private Date createDate;
   private Date updateDate;
+  private DiscussResponseDTO mainDiscuss;
 }
