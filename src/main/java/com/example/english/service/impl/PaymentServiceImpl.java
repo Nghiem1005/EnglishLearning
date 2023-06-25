@@ -65,7 +65,8 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     Bill billSaved = billRepository.save(bill);
-    PaymentResponse responseObject = CreateOrderMoMo.process(environment, billSaved.getId().toString(), requestId, billSaved.getPrice().toString(), paymentRequestDTO.getDescription(), returnUrl, returnUrl, "", RequestType.CAPTURE_WALLET, true);
+    PaymentResponse responseObject = CreateOrderMoMo.process(environment, billSaved.getId().toString(), requestId,
+        String.valueOf(billSaved.getPrice().longValue()), paymentRequestDTO.getDescription(), returnUrl, returnUrl, "", RequestType.CAPTURE_WALLET, true);
     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
   }
 
