@@ -4,7 +4,9 @@ import com.example.english.dto.request.BlogRequestDTO;
 import com.example.english.dto.response.BlogResponseDTO;
 import com.example.english.dto.response.DiscussResponseDTO;
 import com.example.english.dto.response.ResponseObject;
+import com.example.english.entities.Bill;
 import com.example.english.entities.Blog;
+import com.example.english.entities.Course;
 import com.example.english.entities.Feedback;
 import com.example.english.entities.User;
 import com.example.english.exceptions.ResourceNotFoundException;
@@ -100,6 +102,17 @@ public class BlogServiceImpl implements BlogService {
     List<Blog> blogList = getBlogList.getContent();
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List blog.", toListBlogResponseDTO(blogList),
         getBlogList.getTotalPages()));
+  }
+
+  @Override
+  public ResponseEntity<?> deleteBlog(Long blogId) {
+    Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Could not find blog with ID = " + blogId));
+
+    //Delete file image
+    storageService.deleteFile(blog.getImage());
+
+    blogRepository.delete(blog);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Delete blog success!"));
   }
 
   private List<BlogResponseDTO> toListBlogResponseDTO(List<Blog> blogList){

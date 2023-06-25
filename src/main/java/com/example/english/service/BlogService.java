@@ -11,4 +11,5 @@ public interface BlogService {
  ResponseEntity<?> getBlogById(Long blogId);
  ResponseEntity<?> getAllBlog(Pageable pageable);
  ResponseEntity<?> getBlogByUser(Long userId, Pageable pageable);
+ ResponseEntity<?> deleteBlog(Long blogId);
 }

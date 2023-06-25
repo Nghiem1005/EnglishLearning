@@ -55,7 +55,7 @@ public class StorageServiceImpl implements StorageService {
   @Override
   public void deleteFile(String fileName) {
     Bucket bucket = StorageClient.getInstance().bucket();
-
+    fileName = fileName.replace("https://storage.googleapis.com/englishlearningweb.appspot.com/", "");
     Blob blob = bucket.get(fileName);
 
     if (blob == null) {
