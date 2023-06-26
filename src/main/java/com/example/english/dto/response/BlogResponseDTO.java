@@ -16,5 +16,6 @@ public class BlogResponseDTO {
  private String image;
  private Date createDate;
  private Date updateDate;
+ private int totalComment;
  private UserResponseDTO userResponseDTO;
 }

@@ -6,6 +6,7 @@ import com.example.english.dto.response.DiscussResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Bill;
 import com.example.english.entities.Blog;
+import com.example.english.entities.Comment;
 import com.example.english.entities.Course;
 import com.example.english.entities.Feedback;
 import com.example.english.entities.User;
@@ -14,6 +15,7 @@ import com.example.english.mapper.BlogMapper;
 import com.example.english.mapper.FeedbackMapper;
 import com.example.english.mapper.UsersMapper;
 import com.example.english.repository.BlogRepository;
+import com.example.english.repository.CommentRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.BlogService;
 import com.example.english.service.StorageService;
@@ -34,6 +36,7 @@ public class BlogServiceImpl implements BlogService {
   @Autowired private StorageService storageService;
   @Autowired private UserRepository userRepository;
   @Autowired private BlogRepository blogRepository;
+  @Autowired private CommentRepository commentRepository;
 
   @Override
   public ResponseEntity<?> createBlog(Long userId, BlogRequestDTO blogRequestDTO) throws IOException {
@@ -80,7 +83,11 @@ public class BlogServiceImpl implements BlogService {
   public ResponseEntity<?> getBlogById(Long blogId) {
     Blog blog = blogRepository.findById(blogId).orElseThrow(() -> new ResourceNotFoundException("Could not find blog with ID = " + blogId));
 
-    BlogResponseDTO blogResponseDTO = BlogMapper.INSTANCE.blogToBlogResponseDTO(blogRepository.save(blog));
+    BlogResponseDTO blogResponseDTO = BlogMapper.INSTANCE.blogToBlogResponseDTO(blog);
+
+    //Get total comment
+    List<Comment> commentList = commentRepository.findCommentsByBlog(blog);
+    blogResponseDTO.setTotalComment(commentList.size());
 
     blogResponseDTO.setUserResponseDTO(UsersMapper.MAPPER.userToUserResponseDTO(blog.getUser()));
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get blog", blogResponseDTO));
@@ -122,8 +129,14 @@ public class BlogServiceImpl implements BlogService {
 
       //Get user is creater of blog
       blogResponseDTO.setUserResponseDTO(UsersMapper.MAPPER.userToUserResponseDTO(blog.getUser()));
+
+      //Get total blog
+      List<Comment> commentList = commentRepository.findCommentsByBlog(blog);
+      blogResponseDTO.setTotalComment(commentList.size());
+
       blogResponseDTOS.add(blogResponseDTO);
     }
+
     return blogResponseDTOS;
   }
 }
