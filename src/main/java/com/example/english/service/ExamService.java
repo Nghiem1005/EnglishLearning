@@ -8,5 +8,6 @@ import org.springframework.http.ResponseEntity;
 
 public interface ExamService {
  ResponseEntity<?> createExam(ExamRequestDTO examRequestDTO);
+ ResponseEntity<?> createExamLesson(Long lessonId, ExamRequestDTO examRequestDTO);
  ResponseEntity<?> deleteExam(Long examId);
 }

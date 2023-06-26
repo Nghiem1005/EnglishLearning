@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -22,6 +23,11 @@ public class ExamController {
   @PostMapping(value = "")
   public ResponseEntity<?> createExam(@ModelAttribute ExamRequestDTO examRequestDTO) {
     return examService.createExam(examRequestDTO);
+  }
+
+  @PostMapping(value = "/lesson")
+  public ResponseEntity<?> createExamLesson(@RequestParam(name = "lessonId") Long lessonId ,@ModelAttribute ExamRequestDTO examRequestDTO) {
+    return examService.createExamLesson(lessonId, examRequestDTO);
   }
 
   @DeleteMapping (value = "")

@@ -28,9 +28,6 @@ public class Practice {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @NotNull(message = "Part content is required")
-  private String name;
-
   private int period;
 
   private String result;

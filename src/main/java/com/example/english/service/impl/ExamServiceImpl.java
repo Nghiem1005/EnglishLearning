@@ -41,8 +41,27 @@ public class ExamServiceImpl implements ExamService {
   @Autowired private StorageService storageService;
   @Override
   public ResponseEntity<?> createExam(ExamRequestDTO examRequestDTO) {
+    Exam exam = new Exam();
+    ExamResponseDTO examResponseDTO = createExamF(examRequestDTO, exam);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam success", examResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<?> createExamLesson(Long lessonId, ExamRequestDTO examRequestDTO) {
+    Exam exam = new Exam();
+    Lesson lesson = lessonRepository.findById(lessonId)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
+
+    ExamResponseDTO examResponseDTO = createExamF(examRequestDTO, exam);
+
+    lesson.setExam(exam);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam lesson success", examResponseDTO));
+  }
+
+  private ExamResponseDTO createExamF(ExamRequestDTO examRequestDTO, Exam examSaved) {
     Exam exam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
-    Exam examSaved = examRepository.save(exam);
+    examSaved = examRepository.save(exam);
     /*exam.setName(examRequestDTO.getName());
     exam.setPeriod(examRequestDTO.getPeriod());
     exam.setType(ExamType.valueOf(examRequestDTO.getType()));*/
@@ -59,15 +78,16 @@ public class ExamServiceImpl implements ExamService {
 
         part.setExam(examSaved);
 
+        //Calculator serial
+        int serial = examRequestDTO.getPartRequestDTOS().indexOf(partRequestDTO);
+        part.setSerial(serial);
+
         Part partSaved = partRepository.save(part);
 
         List<QuestionPhraseResponseDTO> questionResponseDTOS = QuestionPhraseServiceImpl.createQuestionPhrase(partRequestDTO.getQuestionPhraseRequestDTOS(), partSaved);
 
         PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(partSaved);
         partResponseDTO.setQuestionPhraseResponseDTOS(questionResponseDTOS);
-
-        //Calculator serial
-        partResponseDTO.setSerial(examRequestDTO.getPartRequestDTOS().indexOf(partRequestDTO));
 
         partResponseDTOS.add(partResponseDTO);
       }
@@ -76,15 +96,13 @@ public class ExamServiceImpl implements ExamService {
       for (Part part : partList) {
         partRepository.delete(part);
       }
-      examRepository.delete(exam);
+      examRepository.delete(examSaved);
       throw new BadRequestException(e.getMessage());
     }
 
-    ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(exam);
+    ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(examSaved);
     examResponseDTO.setPartResponseDTOS(partResponseDTOS);
-
-
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam success", examResponseDTO));
+    return examResponseDTO;
   }
 
   @Override

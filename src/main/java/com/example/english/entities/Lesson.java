@@ -11,6 +11,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -52,15 +53,16 @@ public class Lesson {
   @JoinColumn(name = "course_id")
   private Course course;
 
-  @ManyToOne
-  @JoinColumn(name = "practice_id")
-  private Practice practice;
-
   @CreationTimestamp
   private Date createDate;
 
   @UpdateTimestamp
   private Date updateDate;
+
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JoinColumn(name = "exam_id")
+  private Exam exam;
 
   @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
   @OnDelete(action = OnDeleteAction.CASCADE)

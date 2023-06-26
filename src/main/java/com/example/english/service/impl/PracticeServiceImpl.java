@@ -70,11 +70,6 @@ public class PracticeServiceImpl implements PracticeService {
   public ResponseEntity<?> updatePractice(Long practiceId, PracticeRequestDTO practiceRequestDTO) {
     Practice practice = practiceRepository.findById(practiceId).orElseThrow(() -> new ResourceNotFoundException("Could not find practice with ID = " + practiceId));
 
-    //Set fields of practice
-    if (practiceRequestDTO.getName() != null) {
-      practice.setName(practiceRequestDTO.getName());
-    }
-
     if (practiceRequestDTO.getPeriod() != practice.getPeriod()) {
       practice.setPeriod(practiceRequestDTO.getPeriod());
     }
