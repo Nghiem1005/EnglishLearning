@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BillResponseDTO {
-  private Long billId;
+  private Long id;
 
-  private BigDecimal totalPrice;
+  private BigDecimal price;
 
   private String paymentMethod;
 
