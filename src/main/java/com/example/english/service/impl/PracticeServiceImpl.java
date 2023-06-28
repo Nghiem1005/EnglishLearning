@@ -61,54 +61,60 @@ public class PracticeServiceImpl implements PracticeService {
     int point = 0;
     int totalQuestion = 0;
     List<PartResultResponseDTO> partResultResponseDTOS = new ArrayList<>();
-    for (PartResultRequestDTO partResultRequestDTO: practiceRequestDTO.getPartResultRequestDTOS()) {
-      Part part = partRepository.findById(partResultRequestDTO.getPartId())
-          .orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partResultRequestDTO.getPartId()));
+    try {
+      for (PartResultRequestDTO partResultRequestDTO: practiceRequestDTO.getPartResultRequestDTOS()) {
+        Part part = partRepository.findById(partResultRequestDTO.getPartId())
+            .orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partResultRequestDTO.getPartId()));
 
-      //Create practice detail
-      PracticeDetail practiceDetail = new PracticeDetail();
-      practiceDetail.setPart(part);
-      practiceDetail.setPractice(practice);
-      practiceDetailRepository.save(practiceDetail);
+        //Create practice detail
+        PracticeDetail practiceDetail = new PracticeDetail();
+        practiceDetail.setPart(part);
+        practiceDetail.setPractice(practice);
+        practiceDetailRepository.save(practiceDetail);
 
-      //Save result practice
-      List<ResultResponseDTO> resultResponseDTOS = new ArrayList<>();
-      for (ResultRequestDTO resultRequestDTO : partResultRequestDTO.getResultRequestDTOS()) {
-        Question question = questionRepository.findById(resultRequestDTO.getQuestionId())
-            .orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + resultRequestDTO.getQuestionId()));
+        //Save result practice
+        List<ResultResponseDTO> resultResponseDTOS = new ArrayList<>();
+        for (ResultRequestDTO resultRequestDTO : partResultRequestDTO.getResultRequestDTOS()) {
+          Question question = questionRepository.findById(resultRequestDTO.getQuestionId())
+              .orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + resultRequestDTO.getQuestionId()));
 
-        Result result = new Result();
-        result.setQuestion(question);
-        result.setPractice(practiceSaved);
-        result.setChoice(resultRequestDTO.getChoice());
+          Result result = new Result();
+          result.setQuestion(question);
+          result.setPractice(practiceSaved);
+          result.setChoice(resultRequestDTO.getChoice());
 
-        //Get answer true
-        Answer answer = answerRepository.findAnswerByQuestionAndCorrectIsTrue(question);
+          //Get answer true
+          Answer answer = answerRepository.findAnswerByQuestionAndCorrectIsTrue(question);
 
-        if (resultRequestDTO.getChoice() == answer.getSerial()) {
-          result.setCorrect(true);
-          point++;
-        } else {
-          result.setCorrect(false);
+          if (resultRequestDTO.getChoice() == answer.getSerial()) {
+            result.setCorrect(true);
+            point++;
+          } else {
+            result.setCorrect(false);
+          }
+
+          totalQuestion++;
+
+          Result resultSaved = resultRepository.save(result);
+
+          ResultResponseDTO resultResponseDTO = ResultMapper.INSTANCE.resultToResultResponseDTO(resultSaved);
+          resultResponseDTO.setAnswer(answer.getSerial());
+
+          resultResponseDTOS.add(resultResponseDTO);
         }
 
-        totalQuestion++;
-
-        Result resultSaved = resultRepository.save(result);
-
-        ResultResponseDTO resultResponseDTO = ResultMapper.INSTANCE.resultToResultResponseDTO(resultSaved);
-        resultResponseDTO.setAnswer(answer.getSerial());
-
-        resultResponseDTOS.add(resultResponseDTO);
+        //Return part result response
+        PartResultResponseDTO partResultResponseDTO = new PartResultResponseDTO();
+        partResultResponseDTO.setResultResponseDTOS(resultResponseDTOS);
+        partResultResponseDTO.setSerial(partResultResponseDTO.getSerial());
+        partResultResponseDTO.setPartId(part.getId());
+        partResultResponseDTOS.add(partResultResponseDTO);
       }
-
-      //Return part result response
-      PartResultResponseDTO partResultResponseDTO = new PartResultResponseDTO();
-      partResultResponseDTO.setResultResponseDTOS(resultResponseDTOS);
-      partResultResponseDTO.setSerial(partResultResponseDTO.getSerial());
-      partResultResponseDTO.setPartId(part.getId());
-      partResultResponseDTOS.add(partResultResponseDTO);
+    } catch (Exception e) {
+      practiceRepository.delete(practiceSaved);
+      throw new BadRequestException(e.getMessage());
     }
+
     PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practiceSaved);
     practiceResponseDTO.setPartResultResponseDTOS(partResultResponseDTOS);
     practiceResponseDTO.setResult(point + "/" + totalQuestion);
