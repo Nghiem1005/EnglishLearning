@@ -40,7 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
   @Override
   public ResponseEntity<PaymentResponse> createPaymentMomo(PaymentRequestDTO paymentRequestDTO, String returnUrl) throws Exception{
     LogUtils.init();
-    Environment environment = Environment.selectEnv("dev");
+    Environment environment = Environment.selectEnv("nghiem");
     String requestId = String.valueOf(System.currentTimeMillis());
     //Create bill momo
     Course course = courseRepository.findById(paymentRequestDTO.getCourseId())

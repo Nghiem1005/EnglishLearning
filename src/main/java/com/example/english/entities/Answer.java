@@ -31,6 +31,8 @@ public class Answer {
 
   private int serial;
 
+  private String explain;
+
   @NotNull(message = "Correct content is required")
   private boolean correct;
 

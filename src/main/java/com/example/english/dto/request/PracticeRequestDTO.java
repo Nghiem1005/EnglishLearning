@@ -9,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PracticeRequestDTO {
-  private String name;
   private int period;
-  private List<Long> part;
+  private List<PartResultRequestDTO> partResultRequestDTOS;
 }

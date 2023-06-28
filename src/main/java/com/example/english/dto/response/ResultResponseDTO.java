@@ -10,7 +10,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ResultResponseDTO {
   private Long questionId;
-  private int answer;
+  private int serial;
   private int choice;
+  private int answer;
   private boolean correct;
 }

@@ -11,10 +11,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PracticeResponseDTO {
   private Long id;
-  private String name;
   private int period;
-  private Date date;
+  private Date createDate;
   private String result;
-  List<PartResponseDTO> partResponseDTOS;
+  private List<PartResultResponseDTO> partResultResponseDTOS;
   private UserResponseDTO userResponseDTO;
 }

@@ -49,7 +49,7 @@ public class BillServiceImpl implements BillService {
 
     //Calculator price
     Optional<Discount> discount = discountRepository.findDiscountByCourse(course);
-    if (discount.get() != null) {
+    if (discount.isPresent()) {
       BigDecimal price = course.getPrice().multiply (
           BigDecimal.valueOf((100 - discount.get().getPercent()) / 100));
       bill.setPrice(price);
