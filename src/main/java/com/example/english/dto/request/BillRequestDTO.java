@@ -10,6 +10,4 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class BillRequestDTO {
   private String paymentMethod;
-
-  private Date payDate;
 }

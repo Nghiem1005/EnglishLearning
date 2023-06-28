@@ -40,7 +40,7 @@ public class PaymentServiceImpl implements PaymentService {
   @Override
   public ResponseEntity<PaymentResponse> createPaymentMomo(PaymentRequestDTO paymentRequestDTO, String returnUrl) throws Exception{
     LogUtils.init();
-    Environment environment = Environment.selectEnv("nghiem");
+    Environment environment = Environment.selectEnv("dev");
     String requestId = String.valueOf(System.currentTimeMillis());
     //Create bill momo
     Course course = courseRepository.findById(paymentRequestDTO.getCourseId())
@@ -65,17 +65,17 @@ public class PaymentServiceImpl implements PaymentService {
     }
 
     Bill billSaved = billRepository.save(bill);
-    PaymentResponse responseObject = CreateOrderMoMo.process(environment, billSaved.getId().toString(), requestId,
-        String.valueOf(billSaved.getPrice().longValue()), paymentRequestDTO.getDescription(), returnUrl, returnUrl, "", RequestType.CAPTURE_WALLET, true);
+    PaymentResponse responseObject = CreateOrderMoMo.process(environment, requestId, requestId,
+        String.valueOf(billSaved.getPrice().longValue()), paymentRequestDTO.getDescription(), returnUrl, returnUrl, billSaved.getId().toString(), RequestType.CAPTURE_WALLET, true);
     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
   }
 
   @Override
-  public ResponseEntity<?> saveBill(Long billId, Integer resultCode) {
+  public ResponseEntity<?> saveBill(String billId, Integer resultCode) {
     String message = "Payment success!";
     HttpStatus httpStatus = HttpStatus.OK;
 
-    Bill bill = billRepository.findById(billId)
+    Bill bill = billRepository.findById(Long.valueOf(billId))
         .orElseThrow(() -> new ResourceNotFoundException("Could not find bill with ID = " + billId));
 
     //Check process payment

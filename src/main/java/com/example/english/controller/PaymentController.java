@@ -27,8 +27,8 @@ public class PaymentController {
   }
 
   @GetMapping(value = "/success")
-  public RedirectView successPay(@RequestParam(name = "orderId") Long orderId, @RequestParam(name = "resultCode") Integer resultCode) {
-    paymentService.saveBill(orderId, resultCode);
+  public RedirectView successPay(@RequestParam(name = "extraData") String extraData, @RequestParam(name = "resultCode") Integer resultCode) {
+    paymentService.saveBill(extraData, resultCode);
     return new RedirectView("http://localhost:3002/" + RETURN_URL);
   }
 }

@@ -16,7 +16,7 @@ public class BillResponseDTO {
 
   private String paymentMethod;
 
-  private Date payDate;
+  private Date createDate;
 
   private Long courseId;
 

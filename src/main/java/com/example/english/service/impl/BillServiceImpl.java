@@ -43,7 +43,6 @@ public class BillServiceImpl implements BillService {
 
     Bill bill = new Bill();
     bill.setPaymentMethod(billRequestDTO.getPaymentMethod());
-    bill.setPayDate(billRequestDTO.getPayDate());
     bill.setCourse(course);
     bill.setUser(student);
 
@@ -67,7 +66,6 @@ public class BillServiceImpl implements BillService {
         .orElseThrow(() -> new ResourceNotFoundException("Could not find bill with ID = " + billId));
 
     bill.setPaymentMethod(billRequestDTO.getPaymentMethod());
-    bill.setPayDate(billRequestDTO.getPayDate());
 
     BillResponseDTO billResponseDTO = BillMapper.INSTANCE.billToBillResponseDTO(billRepository.save(bill));
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create bill success!", billResponseDTO));

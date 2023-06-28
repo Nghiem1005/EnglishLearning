@@ -33,8 +33,6 @@ public class Bill {
   @NotNull(message = "Payment method is required")
   private String paymentMethod;
 
-  private Date payDate;
-
   @CreationTimestamp
   private Date createDate;
 
