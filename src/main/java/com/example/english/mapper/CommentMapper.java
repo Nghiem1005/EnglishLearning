@@ -13,5 +13,10 @@ public interface CommentMapper {
   CommentMapper INSTANCE = Mappers.getMapper( CommentMapper.class );
   @Mapping(target = "images", expression = "java(null)")
   Comment commentRequestDTOToComment(DiscussRequestDTO comment);
-  DiscussResponseDTO commentToCommentResponseDTO(Comment comment);
+
+  @Mapping(target = "subjectId", source = "c.blog.id")
+  @Mapping(target = "subjectName", source = "c.blog.title")
+  @Mapping(target = "studentId", source = "c.user.id")
+  @Mapping(target = "studentName", source = "c.user.name")
+  DiscussResponseDTO commentToCommentResponseDTO(Comment c);
 }
