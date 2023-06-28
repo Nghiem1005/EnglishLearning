@@ -53,15 +53,14 @@ public class ExamServiceImpl implements ExamService {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
 
+    exam.setLesson(lesson);
     ExamResponseDTO examResponseDTO = createExamF(examRequestDTO, exam);
-
-    lesson.setExam(exam);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam lesson success", examResponseDTO));
   }
 
-  private ExamResponseDTO createExamF(ExamRequestDTO examRequestDTO, Exam examSaved) {
-    Exam exam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
-    examSaved = examRepository.save(exam);
+  private ExamResponseDTO createExamF(ExamRequestDTO examRequestDTO, Exam exam) {
+    exam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
+    Exam examSaved = examRepository.save(exam);
     /*exam.setName(examRequestDTO.getName());
     exam.setPeriod(examRequestDTO.getPeriod());
     exam.setType(ExamType.valueOf(examRequestDTO.getType()));*/

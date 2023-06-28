@@ -15,6 +15,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
@@ -48,4 +49,9 @@ public class Exam {
 
   @UpdateTimestamp
   private Date updateDate;
+
+  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  @JoinColumn(name = "lesson_id")
+  private Lesson lesson;
 }

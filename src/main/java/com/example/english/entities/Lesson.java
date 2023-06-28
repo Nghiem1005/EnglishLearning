@@ -59,11 +59,6 @@ public class Lesson {
   @UpdateTimestamp
   private Date updateDate;
 
-  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @OnDelete(action = OnDeleteAction.CASCADE)
-  @JoinColumn(name = "exam_id")
-  private Exam exam;
-
   @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Inquiry> inquiries = new ArrayList<>();
