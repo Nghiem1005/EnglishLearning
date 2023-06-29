@@ -7,6 +7,7 @@ import com.example.english.entities.Inquiry;
 import com.example.english.entities.Lesson;
 import com.example.english.entities.User;
 import com.example.english.exceptions.ResourceNotFoundException;
+import com.example.english.mapper.FeedbackMapper;
 import com.example.english.mapper.InquiryMapper;
 import com.example.english.repository.InquiryRepository;
 import com.example.english.repository.LessonRepository;
@@ -51,6 +52,9 @@ public class InquiryServiceImpl implements InquiryService {
     List<DiscussResponseDTO> inquiryResponseDTOList = new ArrayList<>();
     for (Inquiry inquiry : inquiryList) {
       DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry);
+      if (inquiry.getMainInquiry() != null) {
+        inquiryResponseDTO.setMainDiscuss(InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquiry.getMainInquiry()));
+      }
       inquiryResponseDTOList.add(inquiryResponseDTO);
     }
 
