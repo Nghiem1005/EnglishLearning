@@ -76,6 +76,10 @@ public class LessonServiceImpl implements LessonService {
         .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + id));
 
     lesson.setName(lessonRequestDTO.getName());
+
+    if (lessonRequestDTO.getDescription() != null) {
+      lesson.setDescription(lessonRequestDTO.getDescription());
+    }
     //lesson.setDocument(lessonRequestDTO.getDocument());
 
     if (lessonRequestDTO.getVideo() != null){
