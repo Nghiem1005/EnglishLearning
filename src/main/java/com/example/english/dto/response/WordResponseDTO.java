@@ -13,6 +13,6 @@ public class WordResponseDTO {
   private String define;
   private String spelling;
   private String type;
-  private String image;
+  private String images;
   private String example;
 }

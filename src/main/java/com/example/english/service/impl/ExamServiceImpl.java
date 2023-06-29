@@ -10,7 +10,6 @@ import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Exam;
 import com.example.english.entities.Lesson;
 import com.example.english.entities.Part;
-import com.example.english.entities.enums.ExamType;
 import com.example.english.entities.enums.PartType;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
