@@ -52,12 +52,12 @@ public class FeedbackServiceImpl implements FeedbackService {
   public ResponseEntity<ResponseObject> getAllFeedbackByCourse(Pageable pageable, Long courseId) {
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + courseId));
-
+    List<Feedback> feedbacks = feedbackRepository.findFeedbacksByCourse(course);
     Page<Feedback> getFeedbackList = feedbackRepository.findFeedbacksByCourse(pageable, course);
     List<Feedback> feedbackList = getFeedbackList.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListFeedbackResponseDTO(feedbackList),
-        getFeedbackList.getTotalPages()));
+        getFeedbackList.getTotalPages(), feedbacks.size()));
   }
 
   @Override
@@ -169,12 +169,12 @@ public class FeedbackServiceImpl implements FeedbackService {
   public ResponseEntity<?> getFeedbackByFeedbackMain(Pageable pageable, Long feedbackMain) {
     Feedback getFeedbackMain = feedbackRepository.findById(feedbackMain)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find feedback main with ID = " + feedbackMain));
-
+    List<Feedback> feedbacks = feedbackRepository.findFeedbacksByMainFeedback(getFeedbackMain);
     Page<Feedback> getFeedbackList = feedbackRepository.findFeedbacksByMainFeedback(pageable, getFeedbackMain);
     List<Feedback> feedbackList = getFeedbackList.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListFeedbackResponseDTO(feedbackList),
-        getFeedbackList.getTotalPages()));
+        getFeedbackList.getTotalPages(), feedbacks.size()));
   }
 
 }

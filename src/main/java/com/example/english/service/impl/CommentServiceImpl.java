@@ -46,12 +46,12 @@ public class CommentServiceImpl implements CommentService {
   public ResponseEntity<?> getAllCommentByBlog(Pageable pageable, Long blogId) {
     Blog blog = blogRepository.findById(blogId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find blog with ID = " + blogId));
-
+    List<Comment> comments = commentRepository.findCommentsByBlog(blog);
     Page<Comment> commentPage = commentRepository.findCommentsByBlog(pageable, blog);
     List<Comment> commentList = commentPage.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List comment.", toListCommentResponseDTO(commentList),
-        commentPage.getTotalPages()));
+        commentPage.getTotalPages(), comments.size()));
   }
 
   @Override
@@ -130,11 +130,12 @@ public class CommentServiceImpl implements CommentService {
     Comment comment = commentRepository.findById(commentMain)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find comment with ID = " + commentMain));
 
+    List<Comment> comments = commentRepository.findCommentsByMainComment(comment);
     Page<Comment> commentPage = commentRepository.findCommentsByMainComment(pageable, comment);
     List<Comment> commentList = commentPage.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List comment.", toListCommentResponseDTO(commentList),
-        commentPage.getTotalPages()));
+        commentPage.getTotalPages(), comments.size()));
   }
 
   private List<DiscussResponseDTO> toListCommentResponseDTO(List<Comment> commentList){

@@ -39,12 +39,12 @@ public class InquiryServiceImpl implements InquiryService {
   public ResponseEntity<?> getAllInquiryByLesson(Pageable pageable, Long lessonId) {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + lessonId));
-
+    List<Inquiry> inquiries = inquiryRepository.findInquiriesByLesson(lesson);
     Page<Inquiry> getInquiryList = inquiryRepository.findInquiriesByLesson(pageable, lesson);
     List<Inquiry> inquiryList = getInquiryList.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListInquiryResponseDTO(inquiryList),
-        getInquiryList.getTotalPages()));
+        getInquiryList.getTotalPages(), inquiries.size()));
   }
 
   private List<DiscussResponseDTO> toListInquiryResponseDTO(List<Inquiry> inquiryList){
@@ -140,11 +140,11 @@ public class InquiryServiceImpl implements InquiryService {
   public ResponseEntity<?> getInquiryByInquiryMain(Pageable pageable, Long inquiryMain) {
     Inquiry getInquiryMain = inquiryRepository.findById(inquiryMain)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find inquiry main with ID = " + inquiryMain));
-
+    List<Inquiry> inquiries = inquiryRepository.findInquiriesByMainInquiry(getInquiryMain);
     Page<Inquiry> getInquiryList = inquiryRepository.findInquiriesByMainInquiry(pageable, getInquiryMain);
     List<Inquiry> inquiryList = getInquiryList.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListInquiryResponseDTO(inquiryList),
-        getInquiryList.getTotalPages()));
+        getInquiryList.getTotalPages(), inquiries.size()));
   }
 }

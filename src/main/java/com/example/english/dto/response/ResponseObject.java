@@ -14,8 +14,8 @@ public class ResponseObject {
   private HttpStatus status;
   private String message;
   private Object data;
-
   private int totalPage;
+  private int total;
 
   public ResponseObject(HttpStatus status, String message) {
     this.status = status;
@@ -28,5 +28,12 @@ public class ResponseObject {
     this.message = message;
     this.data = data;
     this.totalPage = 0;
+  }
+
+  public ResponseObject(HttpStatus status, String message, Object data, int totalPage) {
+    this.status = status;
+    this.message = message;
+    this.data = data;
+    this.totalPage = totalPage;
   }
 }

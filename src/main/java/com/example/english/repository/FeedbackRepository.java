@@ -16,4 +16,5 @@ public interface FeedbackRepository extends JpaRepository<Feedback, Long> {
   Page<Feedback> findFeedbacksByCourseAndPending(Pageable pageable, Course course, boolean pending);
   List<Feedback> findFeedbacksByCourse(Course course);
   Page<Feedback> findFeedbacksByMainFeedback(Pageable pageable, Feedback feedback);
+  List<Feedback> findFeedbacksByMainFeedback(Feedback feedback);
 }
