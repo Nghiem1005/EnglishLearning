@@ -6,5 +6,5 @@ import org.springframework.http.ResponseEntity;
 
 public interface PaymentService {
   ResponseEntity<PaymentResponse> createPaymentMomo(PaymentRequestDTO paymentRequestDTO, String returnUrl) throws Exception;
-  ResponseEntity<?> saveBill(String billId, Integer resultCode);
+  ResponseEntity<?> saveBill(String extraData, String amount, Integer resultCode);
 }

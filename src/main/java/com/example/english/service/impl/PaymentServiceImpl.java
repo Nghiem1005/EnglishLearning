@@ -23,6 +23,7 @@ import com.mservice.processor.CreateOrderMoMo;
 import com.mservice.shared.utils.LogUtils;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -42,53 +43,53 @@ public class PaymentServiceImpl implements PaymentService {
     LogUtils.init();
     Environment environment = Environment.selectEnv("dev");
     String requestId = String.valueOf(System.currentTimeMillis());
-    //Create bill momo
-    Course course = courseRepository.findById(paymentRequestDTO.getCourseId())
-        .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + paymentRequestDTO.getCourseId()));
-
-    User student = userRepository.findById(paymentRequestDTO.getStudentId())
-        .orElseThrow(() -> new ResourceNotFoundException("Could not find student with ID = " + paymentRequestDTO.getStudentId()));
-
-    Bill bill = new Bill();
-    bill.setPaymentMethod("MOMO");
-    bill.setCourse(course);
-    bill.setUser(student);
-
-    //Calculator price
-    Optional<Discount> discount = discountRepository.findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(course, new Date(), new Date());
-    if (discount.isPresent()) {
-      BigDecimal price = course.getPrice().multiply (
-          BigDecimal.valueOf((100 - discount.get().getPercent()) / 100));
-      bill.setPrice(price);
-    } else {
-      bill.setPrice(course.getPrice());
-    }
-
-    Bill billSaved = billRepository.save(bill);
     PaymentResponse responseObject = CreateOrderMoMo.process(environment, requestId, requestId,
-        String.valueOf(billSaved.getPrice().longValue()), paymentRequestDTO.getDescription(), returnUrl, returnUrl, billSaved.getId().toString(), RequestType.CAPTURE_WALLET, true);
+        String.valueOf(paymentRequestDTO.getPrice().longValue()), paymentRequestDTO.getDescription(), returnUrl, returnUrl,
+        paymentRequestDTO.getStudentId().toString() + "-" + paymentRequestDTO.getCourseId(), RequestType.CAPTURE_WALLET, true);
     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
   }
 
   @Override
-  public ResponseEntity<?> saveBill(String billId, Integer resultCode) {
+  public ResponseEntity<?> saveBill(String extraData, String amount, Integer resultCode) {
     String message = "Payment success!";
     HttpStatus httpStatus = HttpStatus.OK;
 
-    Bill bill = billRepository.findById(Long.valueOf(billId))
-        .orElseThrow(() -> new ResourceNotFoundException("Could not find bill with ID = " + billId));
-
     //Check process payment
-    if (resultCode == null || resultCode != 0){
+    if (extraData.equals("") || resultCode != 0){
       message = "Payment fail!";
       httpStatus = HttpStatus.BAD_REQUEST;
-      billRepository.delete(bill);
     } else {
+      String[] str = extraData.split("-");
+      Long studentId = Long.parseLong(str[0]);
+      Long courseId = Long.parseLong(str[1]);
+      //Create bill momo
+      Course course = courseRepository.findById(courseId)
+          .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + courseId));
+
+      User student = userRepository.findById(studentId)
+          .orElseThrow(() -> new ResourceNotFoundException("Could not find student with ID = " + studentId));
+
+      Bill bill = new Bill();
+      bill.setPaymentMethod("MOMO");
+      bill.setCourse(course);
+      bill.setUser(student);
+
+      //Calculator price
+      Optional<Discount> discount = discountRepository.findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(course, new Date(), new Date());
+      if (discount.isPresent()) {
+        BigDecimal price = course.getPrice().multiply (
+            BigDecimal.valueOf((100 - discount.get().getPercent()) / 100));
+        bill.setPrice(price);
+      } else {
+        bill.setPrice(course.getPrice());
+      }
+
+      Bill billSaved = billRepository.save(bill);
 
       //Attend student in course
       StudentCourse studentCourse = new StudentCourse();
-      studentCourse.setCourse(bill.getCourse());
-      studentCourse.setUser(bill.getUser());
+      studentCourse.setCourse(billSaved.getCourse());
+      studentCourse.setUser(billSaved.getUser());
       studentCourse.setProgress(1);
       studentCourseRepository.save(studentCourse);
     }
