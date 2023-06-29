@@ -45,7 +45,7 @@ public class StorageServiceImpl implements StorageService {
   public String uploadFile(MultipartFile file) throws IOException {
     Bucket bucket = StorageClient.getInstance().bucket();
 
-    String name = generateFileName(file);
+    String name = file.getOriginalFilename();
 
     Blob blob = bucket.create(name, file.getBytes(), file.getContentType());
 
