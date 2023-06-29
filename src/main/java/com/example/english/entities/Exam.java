@@ -1,6 +1,5 @@
 package com.example.english.entities;
 
-import com.example.english.entities.enums.ExamType;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -41,8 +40,6 @@ public class Exam {
   private String name;
 
   private int period;
-
-  private ExamType type;
 
   @CreationTimestamp
   private Date createDate;
