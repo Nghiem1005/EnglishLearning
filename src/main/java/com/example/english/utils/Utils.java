@@ -17,8 +17,7 @@ public class Utils {
     int numberOfDocument = images.length;
     String[] nameFiles = new String[numberOfDocument];
     for (int i=0; i<numberOfDocument; i++){
-      String name = storageService.uploadFile(images[i]);
-      nameFiles[i] = storageService.getFile(name).getMediaLink();
+      nameFiles[i] = storageService.uploadFile(images[i]);
     }
 
     return new ArrayList<>(Arrays.asList(nameFiles));
