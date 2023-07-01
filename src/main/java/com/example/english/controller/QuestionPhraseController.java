@@ -22,12 +22,10 @@ import org.springframework.web.multipart.MultipartFile;
 public class QuestionPhraseController {
   @Autowired private QuestionPhraseService questionPhraseService;
 
-  @PostMapping(value = "")
+  @PostMapping(value = "", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
   @RequestBody(content = @Content(encoding = @Encoding(name = "questionPhraseRequestDTO", contentType = "application/json")))
-  public ResponseEntity<?> addQuestionPhrase(@RequestBody QuestionPhraseRequestDTO questionPhraseRequestDTO, @RequestParam(name = "partId") Long partId,
-      @RequestPart MultipartFile documents) throws IOException {
-    System.out.println(questionPhraseRequestDTO);
-    MultipartFile[] multipartFiles = {documents};
-    return questionPhraseService.createQuestionPhrase(partId, questionPhraseRequestDTO, multipartFiles);
+  public ResponseEntity<?> addQuestionPhrase(@RequestPart QuestionPhraseRequestDTO questionPhraseRequestDTO, @RequestParam(name = "partId") Long partId,
+      @RequestPart MultipartFile[] documents) throws IOException {
+    return questionPhraseService.createQuestionPhrase(partId, questionPhraseRequestDTO, documents);
   }
 }
