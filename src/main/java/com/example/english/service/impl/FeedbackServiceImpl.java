@@ -19,6 +19,7 @@ import com.example.english.service.StorageService;
 import com.example.english.utils.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import javax.transaction.Transactional;
@@ -28,6 +29,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -107,7 +109,7 @@ public class FeedbackServiceImpl implements FeedbackService {
     feedback.setUser(student);
 
     if (feedbackRequestDTO.getImages() != null){
-      List<String> nameFiles = Utils.storeFile(feedbackRequestDTO.getImages());
+      List<String> nameFiles = storeFile(feedbackRequestDTO.getImages());
       feedback.setImages(nameFiles);
     }
     DiscussResponseDTO feedbackMainResponseDTO = new DiscussResponseDTO();
@@ -175,6 +177,16 @@ public class FeedbackServiceImpl implements FeedbackService {
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListFeedbackResponseDTO(feedbackList),
         getFeedbackList.getTotalPages(), feedbacks.size()));
+  }
+
+  private List<String> storeFile(MultipartFile[] images) throws IOException {
+    int numberOfDocument = images.length;
+    String[] nameFiles = new String[numberOfDocument];
+    for (int i=0; i<numberOfDocument; i++){
+      nameFiles[i] = storageService.uploadFile(images[i]);
+    }
+
+    return new ArrayList<>(Arrays.asList(nameFiles));
   }
 
 }

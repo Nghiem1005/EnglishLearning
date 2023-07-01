@@ -13,9 +13,11 @@ import com.example.english.repository.InquiryRepository;
 import com.example.english.repository.LessonRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.InquiryService;
+import com.example.english.service.StorageService;
 import com.example.english.utils.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -23,12 +25,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class InquiryServiceImpl implements InquiryService {
   @Autowired private LessonRepository lessonRepository;
   @Autowired private InquiryRepository inquiryRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired private StorageService storageService;
 
   @Override
   public ResponseEntity<?> getAllFeedback(Pageable pageable) {
@@ -74,7 +78,7 @@ public class InquiryServiceImpl implements InquiryService {
     inquiry.setUser(student);
 
     if (inquiryRequestDTO.getImages() != null){
-      List<String> nameFiles = Utils.storeFile(inquiryRequestDTO.getImages());
+      List<String> nameFiles = storeFile(inquiryRequestDTO.getImages());
       inquiry.setImages(nameFiles);
     }
 
@@ -146,5 +150,15 @@ public class InquiryServiceImpl implements InquiryService {
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List feedback.", toListInquiryResponseDTO(inquiryList),
         getInquiryList.getTotalPages(), inquiries.size()));
+  }
+
+  private List<String> storeFile(MultipartFile[] images) throws IOException {
+    int numberOfDocument = images.length;
+    String[] nameFiles = new String[numberOfDocument];
+    for (int i=0; i<numberOfDocument; i++){
+      nameFiles[i] = storageService.uploadFile(images[i]);
+    }
+
+    return new ArrayList<>(Arrays.asList(nameFiles));
   }
 }

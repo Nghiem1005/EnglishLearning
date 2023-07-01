@@ -16,9 +16,11 @@ import com.example.english.repository.BlogRepository;
 import com.example.english.repository.CommentRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.CommentService;
+import com.example.english.service.StorageService;
 import com.example.english.utils.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,12 +29,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class CommentServiceImpl implements CommentService {
   @Autowired private CommentRepository commentRepository;
   @Autowired private BlogRepository blogRepository;
   @Autowired private UserRepository userRepository;
+  @Autowired private StorageService storageService;
   @Override
   public ResponseEntity<?> getAllComment(Pageable pageable) {
     Page<Comment> commentPage = commentRepository.findAll(pageable);
@@ -67,7 +71,7 @@ public class CommentServiceImpl implements CommentService {
     comment.setUser(user);
 
     if (commentRequestDTO.getImages() != null){
-      List<String> nameFiles = Utils.storeFile(commentRequestDTO.getImages());
+      List<String> nameFiles = storeFile(commentRequestDTO.getImages());
       comment.setImages(nameFiles);
     }
     DiscussResponseDTO commentMainResponseDTO = new DiscussResponseDTO();
@@ -150,5 +154,15 @@ public class CommentServiceImpl implements CommentService {
     }
 
     return commentResponseDTOList;
+  }
+
+  private List<String> storeFile(MultipartFile[] images) throws IOException {
+    int numberOfDocument = images.length;
+    String[] nameFiles = new String[numberOfDocument];
+    for (int i=0; i<numberOfDocument; i++){
+      nameFiles[i] = storageService.uploadFile(images[i]);
+    }
+
+    return new ArrayList<>(Arrays.asList(nameFiles));
   }
 }
