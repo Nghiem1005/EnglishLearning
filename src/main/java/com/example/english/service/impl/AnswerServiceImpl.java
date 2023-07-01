@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AnswerServiceImpl implements AnswerService {
-  @Autowired private static AnswerRepository answerRepository;
+  @Autowired private AnswerRepository answerRepository;
   @Autowired private QuestionRepository questionRepository;
 
   @Override
