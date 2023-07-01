@@ -12,7 +12,4 @@ import org.springframework.web.multipart.MultipartFile;
 public class PartRequestDTO {
  private String description;
  private String type;
- private MultipartFile document;
- private int serial;
- private List<QuestionPhraseRequestDTO> questionPhraseRequestDTOS;
 }

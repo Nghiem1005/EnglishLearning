@@ -11,5 +11,4 @@ import lombok.NoArgsConstructor;
 public class ExamRequestDTO {
   private String name;
   private int period;
-  private List<PartRequestDTO> partRequestDTOS;
 }

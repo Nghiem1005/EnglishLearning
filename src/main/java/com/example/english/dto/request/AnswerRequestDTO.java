@@ -9,6 +9,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class AnswerRequestDTO {
  private String content;
- private int serial;
  private boolean correct;
 }

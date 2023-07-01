@@ -21,14 +21,16 @@ public class ExamController {
   @Autowired private ExamService examService;
 
   @PostMapping(value = "")
-  public ResponseEntity<?> createExam(@ModelAttribute ExamRequestDTO examRequestDTO) {
+  public ResponseEntity<?> createExam(@RequestBody ExamRequestDTO examRequestDTO) {
     return examService.createExam(examRequestDTO);
   }
 
   @PostMapping(value = "/lesson")
-  public ResponseEntity<?> createExamLesson(@RequestParam(name = "lessonId") Long lessonId ,@ModelAttribute ExamRequestDTO examRequestDTO) {
+  public ResponseEntity<?> createExamLesson(@RequestParam(name = "lessonId") Long lessonId ,@RequestBody ExamRequestDTO examRequestDTO) {
     return examService.createExamLesson(lessonId, examRequestDTO);
   }
+
+
 
   @DeleteMapping (value = "")
   public ResponseEntity<?> deleteExam(@RequestParam(name = "examId") Long examId) throws IOException {
