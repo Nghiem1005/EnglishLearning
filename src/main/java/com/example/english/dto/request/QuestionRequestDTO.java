@@ -12,5 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class QuestionRequestDTO {
   private String content;
   private String explainContent;
+  private int serial;
   private List<AnswerRequestDTO> answerRequestDTOS;
 }

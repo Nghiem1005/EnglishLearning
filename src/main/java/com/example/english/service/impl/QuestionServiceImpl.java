@@ -52,7 +52,7 @@ public class QuestionServiceImpl implements QuestionService {
     question.setExplainContent(questionRequestDTO.getExplainContent());
 
     List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
-    question.setSerial(questionList.size() + 1);
+    question.setSerial(questionRequestDTO.getSerial());
 
     question.setQuestionPhrase(questionPhrase);
 
