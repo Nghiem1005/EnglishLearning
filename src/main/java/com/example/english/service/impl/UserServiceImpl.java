@@ -24,6 +24,7 @@ import com.example.english.service.UserService;
 import com.example.english.utils.TokenProvider;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -116,6 +117,19 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user));
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ResponseObject(HttpStatus.OK, "Verify account success!!!", userResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<?> getAllTeacher() {
+    List<User> userList = userRepository.findUsersByRole(Role.TEACHER);
+
+    List<UserResponseDTO> userResponseDTOS = new ArrayList<>();
+    for (User user : userList) {
+      UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(user);
+      userResponseDTOS.add(userResponseDTO);
+    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Success", userResponseDTOS));
   }
 
   @Override

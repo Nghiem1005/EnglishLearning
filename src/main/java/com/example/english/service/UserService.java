@@ -11,7 +11,7 @@ public interface UserService {
   ResponseEntity<?> createUser(UserRequestDTO userRequestDTO, String siteUrl)
       throws MessagingException, UnsupportedEncodingException;
   ResponseEntity<?> verifyUser(String verifyCode);
-
+  ResponseEntity<?> getAllTeacher();
   ResponseEntity<?> login(AuthRequestDTO authRequestDTO);
   ResponseEntity<?> getUserById(Long id);
   ResponseEntity<?> updateUser(Long id, UserRequestDTO userRequestDTO) throws IOException;

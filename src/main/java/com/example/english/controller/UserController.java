@@ -31,6 +31,11 @@ public class UserController {
     return userService.getUserById(id);
   }
 
+  @GetMapping(value = "/teacher")
+  public ResponseEntity<?> getAllTeacher(){
+    return userService.getAllTeacher();
+  }
+
   @PutMapping(value = "/password/{userId}")
   public ResponseEntity<?> updateUser(@RequestPart(name = "newPassword") String newPassword,
       @PathVariable(name = "userId") Long userId, @RequestPart(name = "oldPassword") String oldPassword){
