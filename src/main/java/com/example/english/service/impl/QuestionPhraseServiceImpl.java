@@ -45,7 +45,7 @@ public class QuestionPhraseServiceImpl implements QuestionPhraseService {
       QuestionPhrase questionPhrase = new QuestionPhrase();
 
       List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
-      questionPhrase.setSerial(questionPhraseList.size() + 1);
+      questionPhrase.setSerial(questionPhraseRequestDTO.getSerial());
 
       if (documents != null) {
         List<String> nameFiles = storeFile(documents);
@@ -57,8 +57,8 @@ public class QuestionPhraseServiceImpl implements QuestionPhraseService {
       QuestionPhrase questionPhraseSaved = questionPhraseRepository.save(questionPhrase);
 
       List<QuestionResponseDTO> questionResponseDTOS = new ArrayList<>();
-      List<QuestionRequestDTO> questionRequestDTOList = Arrays.asList(questionPhraseRequestDTO.getQuestionRequestDTOS());
-      for (QuestionRequestDTO  questionRequestDTO : questionRequestDTOList) {
+      //List<QuestionRequestDTO> questionRequestDTOList = Arrays.asList(questionPhraseRequestDTO.getQuestionRequestDTOS());
+      for (QuestionRequestDTO  questionRequestDTO : questionPhraseRequestDTO.getQuestionRequestDTOS()) {
         QuestionResponseDTO questionResponseDTO = questionService.createQuestion(questionPhraseSaved.getId(), questionRequestDTO);
         questionResponseDTOS.add(questionResponseDTO);
       }

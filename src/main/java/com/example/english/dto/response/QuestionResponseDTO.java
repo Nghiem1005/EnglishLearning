@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 public class QuestionResponseDTO {
   private Long id;
   private String content;
-  private String image;
   private int serial;
   private List<AnswerResponseDTO> answerResponseDTOS;
 }

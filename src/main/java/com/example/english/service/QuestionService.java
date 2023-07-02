@@ -17,4 +17,5 @@ public interface QuestionService {
       throws IOException;
 
   ResponseEntity<?> deleteQuestion(Long id);
+  ResponseEntity<?> getQuestionById(Long id);
 }

@@ -10,6 +10,7 @@ import com.example.english.entities.Part;
 import com.example.english.entities.Question;
 import com.example.english.entities.QuestionPhrase;
 import com.example.english.exceptions.ResourceNotFoundException;
+import com.example.english.mapper.AnswerMapper;
 import com.example.english.mapper.QuestionMapper;
 import com.example.english.repository.AnswerRepository;
 import com.example.english.repository.PartRepository;
@@ -33,6 +34,7 @@ public class QuestionServiceImpl implements QuestionService {
   @Autowired private StorageService storageService;
   @Autowired private QuestionRepository questionRepository;
   @Autowired private AnswerService answerService;
+  @Autowired private AnswerRepository answerRepository;
 
   @Override
   public ResponseEntity<?> addQuestion(Long questionPhraseId, QuestionRequestDTO questionRequestDTO)
@@ -89,6 +91,25 @@ public class QuestionServiceImpl implements QuestionService {
     questionRepository.delete(getQuestion);
     return ResponseEntity.status(HttpStatus.OK)
         .body(new ResponseObject(HttpStatus.OK, "Delete question successfully!"));
+  }
+
+  @Override
+  public ResponseEntity<?> getQuestionById(Long id) {
+    Question question = questionRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + id));
+
+    QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(question);
+
+    List<Answer> answerList = answerRepository.findAnswersByQuestion(question);
+    List<AnswerResponseDTO> answerResponseDTOS = new ArrayList<>();
+    for (Answer answer : answerList) {
+      AnswerResponseDTO answerResponseDTO = AnswerMapper.INSTANCE.answerToAnswerResponseDTO(answer);
+      answerResponseDTOS.add(answerResponseDTO);
+    }
+    questionResponseDTO.setAnswerResponseDTOS(answerResponseDTOS);
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Get question successfully!", questionResponseDTO));
+
   }
 
   /*public static List<QuestionResponseDTO> createListQuestion(List<QuestionRequestDTO> questionRequestDTOList, QuestionPhrase questionPhrase)

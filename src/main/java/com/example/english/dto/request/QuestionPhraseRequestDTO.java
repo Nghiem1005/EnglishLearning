@@ -10,5 +10,6 @@ import org.springframework.web.multipart.MultipartFile;
 @NoArgsConstructor
 @AllArgsConstructor
 public class QuestionPhraseRequestDTO {
-  private QuestionRequestDTO[] questionRequestDTOS;
+  private int serial;
+  private List<QuestionRequestDTO> questionRequestDTOS;
 }
