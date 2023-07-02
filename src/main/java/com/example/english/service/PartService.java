@@ -8,4 +8,5 @@ public interface PartService {
   ResponseEntity<?> createPart(Long examId, PartRequestDTO partRequestDTO);
   ResponseEntity<?> updatePart(Long partId, PracticeRequestDTO practiceRequestDTO);
   ResponseEntity<?> deletePart(Long partId);
+  ResponseEntity<?> getPartById(Long partId);
 }

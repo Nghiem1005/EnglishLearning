@@ -5,6 +5,8 @@ import com.example.english.dto.request.PartRequestDTO;
 import com.example.english.service.PartService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,5 +21,10 @@ public class PartController {
   @PostMapping(value = "")
   public ResponseEntity<?> createPart(@RequestBody PartRequestDTO partRequestDTO, @RequestParam(name = "examId") Long examId) {
     return partService.createPart(examId, partRequestDTO);
+  }
+
+  @GetMapping(value = "/{id}")
+  public ResponseEntity<?> getPartById(@PathVariable(name = "id") Long id) {
+    return partService.getPartById(id);
   }
 }
