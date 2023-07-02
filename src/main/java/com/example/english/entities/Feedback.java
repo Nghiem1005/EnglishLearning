@@ -52,7 +52,7 @@ public class Feedback {
   @JoinColumn(name = "user_id")
   private User user;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;
 }

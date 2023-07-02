@@ -32,7 +32,7 @@ public class StudentCourse {
   private User user;
 
   @Id
-  @ManyToOne(optional = false)
+  @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;
 

@@ -42,7 +42,7 @@ public class Discount {
   @Timestamp
   private Date endDate;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;
 }
