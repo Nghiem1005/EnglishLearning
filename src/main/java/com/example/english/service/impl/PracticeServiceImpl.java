@@ -55,6 +55,7 @@ public class PracticeServiceImpl implements PracticeService {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
 
     Practice practice = PracticeMapper.INSTANCE.practiceRequestDTOToPractice(practiceRequestDTO);
+    practice.setUser(user);
     Practice practiceSaved = practiceRepository.save(practice);
 
     //Add parts to practice

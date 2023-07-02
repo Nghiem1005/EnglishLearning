@@ -31,6 +31,7 @@ import com.example.english.service.StorageService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -92,62 +93,80 @@ public class ExamServiceImpl implements ExamService {
   }
 
   @Override
+  public ResponseEntity<?> getExamByLesson(Long lessonId) {
+    Lesson lesson = lessonRepository.findById(lessonId)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
+
+    Optional<Exam> getExam = examRepository.findExamByLesson(lesson);
+    if (!getExam.isPresent()) {
+      throw new ResourceNotFoundException("Lesson has not exam");
+    }
+
+    Exam exam = getExam.get();
+    ExamResponseDTO examResponseDTO = convertExamToExamResponseDTO(exam);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get exam lesson", examResponseDTO));
+  }
+
+  @Override
   public ResponseEntity<?> getAllExam(Pageable pageable) {
     Page<Exam> examPage = examRepository.findExamsByLessonIsNull(pageable);
     List<Exam> examList = examPage.getContent();
 
     List<ExamResponseDTO> examResponseDTOS = new ArrayList<>();
-    int totalQuestionExam = 0;
-    List<PracticeDetail> practiceDetailList = new ArrayList<>();
+
     for (Exam exam : examList) {
-      ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(exam);
-
-      //Get part of exam
-      List<Part> partList = partRepository.findPartsByExam(exam);
-      List<PartResponseDTO> partResponseDTOS = new ArrayList<>();
-      int totalQuestionPart = 0;
-      for (Part part : partList) {
-        //Get total question
-        List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
-        for (QuestionPhrase questionPhrase : questionPhraseList) {
-          List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
-          totalQuestionPart = totalQuestionPart + questionList.size();
-        }
-        PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(part);
-        partResponseDTO.setTotalQuestion(totalQuestionPart);
-        partResponseDTOS.add(partResponseDTO);
-
-        //Get total user who practiced this part
-        List<PracticeDetail> practiceDetails = practiceDetailRepository.findPracticeDetailsByPart(part);
-        practiceDetailList.addAll(practiceDetails);
-      }
-
-      //Get total question
-      totalQuestionExam = totalQuestionExam + totalQuestionPart;
-      examResponseDTO.setTotalQuestion(totalQuestionExam);
-
-      //Get total user who practiced exam
-      int totalUser = 0;
-      if (!practiceDetailList.isEmpty()) {
-        List<User> userList = new ArrayList<>();
-        totalUser = 1;
-        userList.add(practiceDetailList.get(0).getPractice().getUser());
-        for (PracticeDetail practiceDetail : practiceDetailList) {
-          if (!userList.contains(practiceDetail.getPractice().getUser())) {
-            totalUser++;
-            userList.add(practiceDetail.getPractice().getUser());
-          }
-        }
-      }
-
-      examResponseDTO.setTotalUser(totalUser);
-
-      examResponseDTO.setPartResponseDTOS(partResponseDTOS);
-
-      examResponseDTOS.add(examResponseDTO);
+      examResponseDTOS.add(convertExamToExamResponseDTO(exam));
     }
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get all exam", examResponseDTOS));
+  }
+
+  private ExamResponseDTO convertExamToExamResponseDTO(Exam exam) {
+    ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(exam);
+    List<PracticeDetail> practiceDetailList = new ArrayList<>();
+    int totalQuestionExam = 0;
+    //Get part of exam
+    List<Part> partList = partRepository.findPartsByExam(exam);
+    List<PartResponseDTO> partResponseDTOS = new ArrayList<>();
+    int totalQuestionPart = 0;
+    for (Part part : partList) {
+      //Get total question
+      List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
+      for (QuestionPhrase questionPhrase : questionPhraseList) {
+        List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
+        totalQuestionPart = totalQuestionPart + questionList.size();
+      }
+      PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(part);
+      partResponseDTO.setTotalQuestion(totalQuestionPart);
+      partResponseDTOS.add(partResponseDTO);
+
+      //Get total user who practiced this part
+      List<PracticeDetail> practiceDetails = practiceDetailRepository.findPracticeDetailsByPart(part);
+      practiceDetailList.addAll(practiceDetails);
+    }
+
+    //Get total question
+    totalQuestionExam = totalQuestionExam + totalQuestionPart;
+    examResponseDTO.setTotalQuestion(totalQuestionExam);
+
+    //Get total user who practiced exam
+    int totalUser = 0;
+    if (!practiceDetailList.isEmpty()) {
+      List<User> userList = new ArrayList<>();
+      totalUser = 1;
+      userList.add(practiceDetailList.get(0).getPractice().getUser());
+      for (PracticeDetail practiceDetail : practiceDetailList) {
+        if (!userList.contains(practiceDetail.getPractice().getUser())) {
+          totalUser++;
+          userList.add(practiceDetail.getPractice().getUser());
+        }
+      }
+    }
+
+    examResponseDTO.setTotalUser(totalUser);
+
+    examResponseDTO.setPartResponseDTOS(partResponseDTOS);
+    return examResponseDTO;
   }
 
 

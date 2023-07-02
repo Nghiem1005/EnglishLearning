@@ -41,6 +41,11 @@ public class ExamController {
     return examService.getAllExam(pageable);
   }
 
+  @GetMapping(value = "/lesson")
+  public ResponseEntity<?> getExamByLesson(@RequestParam(name = "lessonId") Long lessonId) {
+    return examService.getExamByLesson(lessonId);
+  }
+
   @DeleteMapping (value = "")
   public ResponseEntity<?> deleteExam(@RequestParam(name = "examId") Long examId) throws IOException {
     return examService.deleteExam(examId);

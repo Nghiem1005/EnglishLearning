@@ -11,5 +11,6 @@ public interface ExamService {
  ResponseEntity<?> createExam(ExamRequestDTO examRequestDTO);
  ResponseEntity<?> createExamLesson(Long lessonId, ExamRequestDTO examRequestDTO);
  ResponseEntity<?> deleteExam(Long examId);
+ ResponseEntity<?> getExamByLesson(Long lessonId);
  ResponseEntity<?> getAllExam(Pageable pageable);
 }
