@@ -8,6 +8,7 @@ import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Part;
 import com.example.english.entities.Question;
 import com.example.english.entities.QuestionPhrase;
+import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.QuestionMapper;
 import com.example.english.mapper.QuestionPhraseMapper;
@@ -39,31 +40,37 @@ public class QuestionPhraseServiceImpl implements QuestionPhraseService {
   @Override
   public ResponseEntity<?> createQuestionPhrase(Long partId, QuestionPhraseRequestDTO questionPhraseRequestDTO, MultipartFile[] documents) throws IOException {
     Part part = partRepository.findById(partId).orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partId));
+    QuestionPhraseResponseDTO questionPhraseResponseDTO = new QuestionPhraseResponseDTO();
+    try {
+      QuestionPhrase questionPhrase = new QuestionPhrase();
 
-    QuestionPhrase questionPhrase = new QuestionPhrase();
+      List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
+      questionPhrase.setSerial(questionPhraseList.size() + 1);
 
-    List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
-    questionPhrase.setSerial(questionPhraseList.size() + 1);
+      if (documents != null) {
+        List<String> nameFiles = storeFile(documents);
+        questionPhrase.setDocument(nameFiles);
+      }
 
-    if (documents != null) {
-      List<String> nameFiles = storeFile(documents);
-      questionPhrase.setDocument(nameFiles);
+      questionPhrase.setPart(part);
+
+      QuestionPhrase questionPhraseSaved = questionPhraseRepository.save(questionPhrase);
+
+      List<QuestionResponseDTO> questionResponseDTOS = new ArrayList<>();
+      List<QuestionRequestDTO> questionRequestDTOList = Arrays.asList(questionPhraseRequestDTO.getQuestionRequestDTOS());
+      for (QuestionRequestDTO  questionRequestDTO : questionRequestDTOList) {
+        QuestionResponseDTO questionResponseDTO = questionService.createQuestion(questionPhraseSaved.getId(), questionRequestDTO);
+        questionResponseDTOS.add(questionResponseDTO);
+      }
+
+
+      questionPhraseResponseDTO = QuestionPhraseMapper.INSTANCE.questionPhraseToQuestionPhraseResponseDTO(questionPhraseSaved);
+      questionPhraseResponseDTO.setQuestionResponseDTOS(questionResponseDTOS);
+    } catch (Exception e) {
+      partRepository.delete(part);
+      throw new BadRequestException(e.getMessage());
     }
 
-    questionPhrase.setPart(part);
-
-    QuestionPhrase questionPhraseSaved = questionPhraseRepository.save(questionPhrase);
-
-    List<QuestionResponseDTO> questionResponseDTOS = new ArrayList<>();
-    List<QuestionRequestDTO> questionRequestDTOList = Arrays.asList(questionPhraseRequestDTO.getQuestionRequestDTOS());
-    for (QuestionRequestDTO  questionRequestDTO : questionRequestDTOList) {
-      QuestionResponseDTO questionResponseDTO = questionService.createQuestion(questionPhraseSaved.getId(), questionRequestDTO);
-      questionResponseDTOS.add(questionResponseDTO);
-    }
-
-
-    QuestionPhraseResponseDTO questionPhraseResponseDTO = QuestionPhraseMapper.INSTANCE.questionPhraseToQuestionPhraseResponseDTO(questionPhraseSaved);
-    questionPhraseResponseDTO.setQuestionResponseDTOS(questionResponseDTOS);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add question phrase success", questionPhraseResponseDTO));
   }

@@ -10,6 +10,10 @@ import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Exam;
 import com.example.english.entities.Lesson;
 import com.example.english.entities.Part;
+import com.example.english.entities.PracticeDetail;
+import com.example.english.entities.Question;
+import com.example.english.entities.QuestionPhrase;
+import com.example.english.entities.User;
 import com.example.english.entities.enums.PartType;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
@@ -19,6 +23,8 @@ import com.example.english.repository.AnswerRepository;
 import com.example.english.repository.ExamRepository;
 import com.example.english.repository.LessonRepository;
 import com.example.english.repository.PartRepository;
+import com.example.english.repository.PracticeDetailRepository;
+import com.example.english.repository.QuestionPhraseRepository;
 import com.example.english.repository.QuestionRepository;
 import com.example.english.service.ExamService;
 import com.example.english.service.StorageService;
@@ -26,6 +32,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -35,7 +43,8 @@ public class ExamServiceImpl implements ExamService {
   @Autowired private ExamRepository examRepository;
   @Autowired private LessonRepository lessonRepository;
   @Autowired private QuestionRepository questionRepository;
-  @Autowired private AnswerRepository answerRepository;
+  @Autowired private PracticeDetailRepository practiceDetailRepository;
+  @Autowired private QuestionPhraseRepository questionPhraseRepository;
   @Autowired private PartRepository partRepository;
   @Autowired private StorageService storageService;
   @Override
@@ -81,6 +90,66 @@ public class ExamServiceImpl implements ExamService {
     examRepository.delete(exam);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Delete exam success"));
   }
+
+  @Override
+  public ResponseEntity<?> getAllExam(Pageable pageable) {
+    Page<Exam> examPage = examRepository.findExamsByLessonIsNull(pageable);
+    List<Exam> examList = examPage.getContent();
+
+    List<ExamResponseDTO> examResponseDTOS = new ArrayList<>();
+    int totalQuestionExam = 0;
+    List<PracticeDetail> practiceDetailList = new ArrayList<>();
+    for (Exam exam : examList) {
+      ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(exam);
+
+      //Get part of exam
+      List<Part> partList = partRepository.findPartsByExam(exam);
+      List<PartResponseDTO> partResponseDTOS = new ArrayList<>();
+      int totalQuestionPart = 0;
+      for (Part part : partList) {
+        //Get total question
+        List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
+        for (QuestionPhrase questionPhrase : questionPhraseList) {
+          List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
+          totalQuestionPart = totalQuestionPart + questionList.size();
+        }
+        PartResponseDTO partResponseDTO = PartMapper.INSTANCE.partToPartResponseDTO(part);
+        partResponseDTO.setTotalQuestion(totalQuestionPart);
+        partResponseDTOS.add(partResponseDTO);
+
+        //Get total user who practiced this part
+        List<PracticeDetail> practiceDetails = practiceDetailRepository.findPracticeDetailsByPart(part);
+        practiceDetailList.addAll(practiceDetails);
+      }
+
+      //Get total question
+      totalQuestionExam = totalQuestionExam + totalQuestionPart;
+      examResponseDTO.setTotalQuestion(totalQuestionExam);
+
+      //Get total user who practiced exam
+      int totalUser = 0;
+      if (!practiceDetailList.isEmpty()) {
+        List<User> userList = new ArrayList<>();
+        totalUser = 1;
+        userList.add(practiceDetailList.get(0).getPractice().getUser());
+        for (PracticeDetail practiceDetail : practiceDetailList) {
+          if (!userList.contains(practiceDetail.getPractice().getUser())) {
+            totalUser++;
+            userList.add(practiceDetail.getPractice().getUser());
+          }
+        }
+      }
+
+      examResponseDTO.setTotalUser(totalUser);
+
+      examResponseDTO.setPartResponseDTOS(partResponseDTOS);
+
+      examResponseDTOS.add(examResponseDTO);
+    }
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get all exam", examResponseDTOS));
+  }
+
 
   /*private List<QuestionResponseDTO> createQuestion(List<QuestionRequestDTO> questionRequestDTOList, Part part)
       throws IOException {

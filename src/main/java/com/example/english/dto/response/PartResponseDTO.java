@@ -13,5 +13,6 @@ public class PartResponseDTO {
   private int serial;
   private String description;
   private String type;
+  private int totalQuestion;
   private List<QuestionPhraseResponseDTO> questionPhraseResponseDTOS;
 }

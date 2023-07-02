@@ -3,11 +3,15 @@ package com.example.english.controller;
 import com.example.english.dto.request.ExamRequestDTO;
 import com.example.english.dto.request.PartRequestDTO;
 import com.example.english.service.ExamService;
+import com.example.english.utils.Utils;
 import java.io.IOException;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -30,7 +34,12 @@ public class ExamController {
     return examService.createExamLesson(lessonId, examRequestDTO);
   }
 
-
+  @GetMapping
+  public ResponseEntity<?> getListExam(@RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
+  @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return examService.getAllExam(pageable);
+  }
 
   @DeleteMapping (value = "")
   public ResponseEntity<?> deleteExam(@RequestParam(name = "examId") Long examId) throws IOException {

@@ -13,6 +13,7 @@ public class ExamResponseDTO {
  private Long id;
  private String name;
  private int period;
- private String type;
+ private int totalQuestion;
+ private int totalUser;
  private List<PartResponseDTO> partResponseDTOS;
 }
