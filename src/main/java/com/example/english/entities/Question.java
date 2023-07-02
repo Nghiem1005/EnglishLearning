@@ -29,6 +29,8 @@ public class Question {
 
   private String image;
 
+  private String explain;
+
   private int serial = 1;
 
   @ManyToOne(fetch = FetchType.LAZY)
