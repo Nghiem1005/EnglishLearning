@@ -29,7 +29,7 @@ public class QuestionPhrase {
 
   private int serial = 1;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "part_id")
   private Part part;
 }

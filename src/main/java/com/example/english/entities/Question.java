@@ -27,13 +27,11 @@ public class Question {
 
   private String content;
 
-  private String image;
-
-  private String explain;
+  private String explainContent;
 
   private int serial = 1;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "question_phrase_id")
   private QuestionPhrase questionPhrase;
 }

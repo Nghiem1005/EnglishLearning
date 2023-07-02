@@ -71,9 +71,9 @@ public class Course {
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Feedback> feedbacks = new ArrayList<>();
 
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+  /*@OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   @OnDelete(action = OnDeleteAction.CASCADE)
-  private List<Lesson> lessons = new ArrayList<>();
+  private List<Lesson> lessons = new ArrayList<>();*/
 
   @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
   @OnDelete(action = OnDeleteAction.CASCADE)
