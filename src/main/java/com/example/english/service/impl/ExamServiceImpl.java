@@ -108,6 +108,15 @@ public class ExamServiceImpl implements ExamService {
   }
 
   @Override
+  public ResponseEntity<?> getExamById(Long id) {
+    Exam exam = examRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with ID = " + id));
+
+    ExamResponseDTO examResponseDTO = convertExamToExamResponseDTO(exam);
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get exam", examResponseDTO));
+  }
+
+  @Override
   public ResponseEntity<?> getAllExam(Pageable pageable) {
     Page<Exam> examPage = examRepository.findExamsByLessonIsNull(pageable);
     List<Exam> examList = examPage.getContent();
