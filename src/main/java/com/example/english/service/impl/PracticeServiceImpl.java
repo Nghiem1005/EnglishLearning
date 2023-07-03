@@ -125,8 +125,8 @@ public class PracticeServiceImpl implements PracticeService {
       practiceRepository.delete(practiceSaved);
       throw new BadRequestException(e.getMessage());
     }
-
-    PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practiceSaved);
+    practiceSaved.setResult(point + "/" + totalQuestion);
+    PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practiceRepository.save(practiceSaved));
     practiceResponseDTO.setPartResultResponseDTOS(partResultResponseDTOS);
     practiceResponseDTO.setResult(point + "/" + totalQuestion);
     practiceResponseDTO.setUserResponseDTO(UsersMapper.MAPPER.userToUserResponseDTO(user));
@@ -182,7 +182,7 @@ public class PracticeServiceImpl implements PracticeService {
       practiceResultResponseDTO.setPartResultResponseDTOS(partResultResponseDTOS);
       practiceResultResponseDTOS.add(practiceResultResponseDTO);
     }
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get result practice by user success", practiceResultResponseDTOS));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get result practice by user success", practiceResultResponseDTOS, practices.getTotalPages()));
   }
 
   @Override
