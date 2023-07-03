@@ -13,5 +13,6 @@ public interface ResultMapper {
   ResultMapper INSTANCE = Mappers.getMapper(ResultMapper.class);
 
   @Mapping(target = "questionId", source = "result.question.id")
+  @Mapping(target = "serial", source = "result.question.serial")
   ResultResponseDTO resultToResultResponseDTO(Result result);
 }
