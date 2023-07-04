@@ -12,5 +12,6 @@ public class QuestionResponseDTO {
   private Long id;
   private String content;
   private int serial;
+  private String explain;
   private List<AnswerResponseDTO> answerResponseDTOS;
 }

@@ -12,5 +12,4 @@ public class AnswerResponseDTO {
   private String content;
   private boolean correct;
   private int serial;
-  private String explain;
 }
