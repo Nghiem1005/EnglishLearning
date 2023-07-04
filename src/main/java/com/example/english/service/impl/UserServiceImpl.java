@@ -249,6 +249,18 @@ public class UserServiceImpl implements UserService {
         .body(new ResponseObject(HttpStatus.OK, "Delete user success!!!", null));
   }
 
+  @Override
+  public ResponseEntity<?> getAllUserOutCourse() {
+    List<UserResponseDTO> userResponseDTOList = new ArrayList<>();
+    List<User> userList = userRepository.findUsersOutCourse();
+    for (User user : userList) {
+      UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(user);
+      userResponseDTOList.add(userResponseDTO);
+    }
+    return ResponseEntity.status(HttpStatus.OK)
+        .body(new ResponseObject(HttpStatus.OK, "Success", userResponseDTOList));
+  }
+
   private void sendVerificationEmail(User user, String siteUrl)
       throws MessagingException, UnsupportedEncodingException {
     //Design mail form

@@ -17,4 +17,5 @@ public interface UserService {
   ResponseEntity<?> updateUser(Long id, UserRequestDTO userRequestDTO) throws IOException;
   ResponseEntity<?> updatePassword(Long userId, String newPassword, String oldPassword);
   ResponseEntity<?> deleteUser(Long id);
+  ResponseEntity<?> getAllUserOutCourse();
 }
