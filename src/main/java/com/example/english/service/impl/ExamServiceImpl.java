@@ -127,7 +127,7 @@ public class ExamServiceImpl implements ExamService {
       examResponseDTOS.add(convertExamToExamResponseDTO(exam));
     }
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get all exam", examResponseDTOS));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get all exam", examResponseDTOS, examPage.getTotalPages()));
   }
 
   private ExamResponseDTO convertExamToExamResponseDTO(Exam exam) {
