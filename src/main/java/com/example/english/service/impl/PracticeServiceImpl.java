@@ -175,6 +175,7 @@ public class PracticeServiceImpl implements PracticeService {
         PartResultResponseDTO partResultResponseDTO = new PartResultResponseDTO();
         partResultResponseDTO.setPartId(practiceDetail.getPart().getId());
         partResultResponseDTO.setSerial(practiceDetail.getPart().getSerial());
+        partResultResponseDTO.setType(practiceDetail.getPart().getType().name());
 
         partResultResponseDTOS.add(partResultResponseDTO);
       }
@@ -202,6 +203,7 @@ public class PracticeServiceImpl implements PracticeService {
       PartResultResponseDTO partResultResponseDTO = new PartResultResponseDTO();
       partResultResponseDTO.setPartId(practiceDetail.getPart().getId());
       partResultResponseDTO.setSerial(practiceDetail.getPart().getSerial());
+      partResultResponseDTO.setType(practiceDetail.getPart().getType().name());
 
       //Get result question
       List<ResultResponseDTO> resultResponseDTOS = new ArrayList<>();
