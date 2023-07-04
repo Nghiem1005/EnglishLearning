@@ -20,6 +20,7 @@ public class UserRequestDTO {
   private String phone;
   private String password;
   private boolean enable;
+  private String description;
   private String role;
   private MultipartFile image;
 }

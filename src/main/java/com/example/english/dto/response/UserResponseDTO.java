@@ -13,6 +13,7 @@ public class UserResponseDTO {
   private String email;
   private String phone;
   private boolean enable;
+  private String description;
   private String image;
   private String role;
   private String provider;

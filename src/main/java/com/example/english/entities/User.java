@@ -63,6 +63,8 @@ public class User {
   @NotNull(message = "Enable is required")
   private boolean enable;
 
+  private String description;
+
   @Column(name = "images", length = 3000)
   private String images;
 
