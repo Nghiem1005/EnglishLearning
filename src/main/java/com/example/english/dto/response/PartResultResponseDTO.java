@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 public class PartResultResponseDTO {
   private Long partId;
   private int serial;
+  private String type;
   private List<ResultResponseDTO> resultResponseDTOS;
 }
