@@ -51,4 +51,8 @@ public class Exam {
   @OnDelete(action = OnDeleteAction.CASCADE)
   @JoinColumn(name = "lesson_id")
   private Lesson lesson;
+
+  @OneToMany(mappedBy = "exam", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private List<Part> parts = new ArrayList<>();
 }
