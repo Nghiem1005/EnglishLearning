@@ -23,10 +23,8 @@ public class DiscountController {
   @Autowired private DiscountService discountService;
 
   @PostMapping(value = "")
-  public ResponseEntity<?> createDiscount(@RequestParam(name = "courseId") Long courseId, @RequestBody DiscountRequestDTO discountRequestDTO) {
-    List<Integer> ints = new ArrayList<>();
-
-    return discountService.createDiscount(courseId, discountRequestDTO);
+  public ResponseEntity<?> createDiscount(@RequestBody DiscountRequestDTO discountRequestDTO) {
+    return discountService.createDiscount(discountRequestDTO);
   }
 
   @PutMapping
@@ -36,7 +34,11 @@ public class DiscountController {
 
   @DeleteMapping(value = "")
   public ResponseEntity<?> deleteDiscount(@RequestParam(name = "id") Long id) {
-
     return discountService.deleteDiscount(id);
+  }
+
+  @PostMapping(value = "/course")
+  public ResponseEntity<?> addCourseDiscount(@io.swagger.v3.oas.annotations.parameters.RequestBody List<Long> listCourse, @RequestParam(name = "discountId") Long discountId) {
+    return discountService.addCourseDiscount(discountId, listCourse);
   }
 }

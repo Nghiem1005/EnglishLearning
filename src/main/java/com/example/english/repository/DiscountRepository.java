@@ -14,8 +14,8 @@ import org.springframework.stereotype.Repository;
 public interface DiscountRepository extends JpaRepository<Discount, Long> {
   Optional<Discount> findDiscountByCourse(Course course);
 
-  @Query(value = "select * from tbl_discount where (:c_day > create_date and :c_day < end_date) or (:e_day > create_date and :e_day < end_date)", nativeQuery = true)
-  Optional<Discount> findDiscountByDayInPeriod(@Param("c_day") Date c_day, @Param("e_day") Date e_day);
+  @Query(value = "select * from tbl_discount where (:c_day > start_date and :c_day < end_date) or (:e_day > start_date and :e_day < end_date)", nativeQuery = true)
+  List<Discount> findDiscountByDayInPeriod(@Param("c_day") Date c_day, @Param("e_day") Date e_day);
 
 
   Optional<Discount> findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(Course course, Date c_Date, Date currentDate);

@@ -23,4 +23,6 @@ public class CourseResponseDTO {
 
   private UserResponseDTO teacher;
 
+  private DiscountResponseDTO discountResponseDTO;
+
 }

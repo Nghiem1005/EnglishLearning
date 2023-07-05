@@ -42,6 +42,9 @@ public class Discount {
   @Timestamp
   private Date endDate;
 
+  @Timestamp
+  private Date startDate;
+
   @ManyToOne
   @JoinColumn(name = "course_id")
   private Course course;

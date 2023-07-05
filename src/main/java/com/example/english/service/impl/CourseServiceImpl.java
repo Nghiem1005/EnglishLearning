@@ -2,21 +2,27 @@ package com.example.english.service.impl;
 
 import com.example.english.dto.request.CourseRequestDTO;
 import com.example.english.dto.response.CourseResponseDTO;
+import com.example.english.dto.response.DiscountResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Bill;
 import com.example.english.entities.Course;
+import com.example.english.entities.DiscountDetail;
 import com.example.english.entities.User;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.CoursesMapper;
+import com.example.english.mapper.DiscountMapper;
 import com.example.english.repository.BillRepository;
 import com.example.english.repository.CourseRepository;
+import com.example.english.repository.DiscountDetailRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.CourseService;
 import com.example.english.service.StorageService;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -31,6 +37,7 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private StorageService storageService;
   @Autowired private CourseRepository courseRepository;
   @Autowired private BillRepository billRepository;
+  @Autowired private DiscountDetailRepository discountDetailRepository;
   @Override
   public ResponseEntity<?> saveCourse(Long teacherId, CourseRequestDTO courseRequestDTO)
       throws IOException {
@@ -131,8 +138,15 @@ public class CourseServiceImpl implements CourseService {
   @Override
   public ResponseEntity<?> getCourseById(Long id) {
     Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + id));
+    CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(course);
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get a course!", CoursesMapper.INSTANCE.courseToCourseResponseDTO(course)));
+    //Get discount now of course
+    Optional<DiscountDetail> discountDetail = discountDetailRepository.findDiscountByDayInPeriod(course.getId(), new Date());
+    if (discountDetail.isPresent()) {
+      DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountDetail.get().getDiscount());
+      courseResponseDTO.setDiscountResponseDTO(discountResponseDTO);
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get a course!", courseResponseDTO));
   }
 
   @Override
@@ -147,7 +161,15 @@ public class CourseServiceImpl implements CourseService {
   private List<CourseResponseDTO> toCourseResponseDTOList(List<Course> courseList){
     List<CourseResponseDTO> courseResponseDTOList = new ArrayList<>();
     for (Course course : courseList){
-      courseResponseDTOList.add(CoursesMapper.INSTANCE.courseToCourseResponseDTO(course));
+      CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(course);
+
+      //Get discount now of course
+      Optional<DiscountDetail> discountDetail = discountDetailRepository.findDiscountByDayInPeriod(course.getId(), new Date());
+      if (discountDetail.isPresent()) {
+        DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountDetail.get().getDiscount());
+        courseResponseDTO.setDiscountResponseDTO(discountResponseDTO);
+      }
+      courseResponseDTOList.add(courseResponseDTO);
     }
     return courseResponseDTOList;
   }
