@@ -12,7 +12,7 @@ public interface InquiryService {
 
   ResponseEntity<?> createInquiry(DiscussRequestDTO inquiryRequestDTO) throws IOException;
 
-  ResponseEntity<?> updateInquiry(String content, Long id);
+  ResponseEntity<?> updateInquiry(DiscussRequestDTO inquiryRequestDTO, Long id) throws IOException;
 
   ResponseEntity<?> deleteInquiry(Long id);
 

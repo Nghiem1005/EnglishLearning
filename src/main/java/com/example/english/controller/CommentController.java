@@ -37,9 +37,9 @@ public class CommentController {
   }
 
   @PutMapping(value = "")
-  public ResponseEntity<?> updateComment(@RequestParam(name = "content") String content,
-      @RequestParam(name = "id") Long id) {
-    return commentService.updateComment(content, id);
+  public ResponseEntity<?> updateComment(@ModelAttribute DiscussRequestDTO commentRequestDTO,
+      @RequestParam(name = "id") Long id) throws IOException {
+    return commentService.updateComment(commentRequestDTO, id);
   }
 
   @DeleteMapping(value = "")

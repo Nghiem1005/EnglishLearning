@@ -12,7 +12,7 @@ public interface CommentService {
 
   ResponseEntity<?> createComment(DiscussRequestDTO commentRequestDTO) throws IOException;
 
-  ResponseEntity<?> updateComment(String content, Long id);
+  ResponseEntity<?> updateComment(DiscussRequestDTO commentRequestDTO, Long id) throws IOException;
 
   ResponseEntity<?> deleteComment(Long id);
 

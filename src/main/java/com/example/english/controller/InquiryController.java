@@ -31,9 +31,9 @@ public class InquiryController {
   }
 
   @PutMapping(value = "")
-  public ResponseEntity<?> updateInquiry(@RequestParam(name = "content") String content,
-      @RequestParam(name = "id") Long id) {
-    return inquiryService.updateInquiry(content, id);
+  public ResponseEntity<?> updateInquiry(@ModelAttribute DiscussRequestDTO inquiryRequestDTO,
+      @RequestParam(name = "id") Long id) throws IOException {
+    return inquiryService.updateInquiry(inquiryRequestDTO, id);
   }
 
   @DeleteMapping(value = "")

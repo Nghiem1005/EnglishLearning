@@ -129,11 +129,24 @@ public class FeedbackServiceImpl implements FeedbackService {
   }
 
   @Override
-  public ResponseEntity<ResponseObject> updateFeedback(String content, Long id) {
+  public ResponseEntity<ResponseObject> updateFeedback(DiscussRequestDTO feedbackRequestDTO, Long id)
+      throws IOException {
     Feedback feedback = feedbackRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find feedback with ID = " + id));
-    feedback.setId(id);
-    feedback.setContent(content);
+
+    if (feedbackRequestDTO.getContent() != null) {
+      feedback.setContent(feedbackRequestDTO.getContent());
+    }
+
+    if (feedbackRequestDTO.getImages() != null){
+      List<String> nameFiles = storeFile(feedbackRequestDTO.getImages());
+      feedback.setImages(nameFiles);
+    }
+
+    if (feedbackRequestDTO.isPending() == true){
+      feedback.setPending(feedbackRequestDTO.isPending());
+    }
+
     Feedback feedbackSaved = feedbackRepository.save(feedback);
     DiscussResponseDTO feedbackResponseDTO = FeedbackMapper.INSTANCE.feedbackToFeedbackResponseDTO(feedbackSaved);
     if (feedback.getMainFeedback() != null) {

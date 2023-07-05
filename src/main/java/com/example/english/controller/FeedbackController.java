@@ -39,9 +39,9 @@ public class FeedbackController {
   }
 
   @PutMapping(value = "")
-  public ResponseEntity<?> updateFeedback(@RequestParam(name = "content") String content,
-      @RequestParam(name = "id") Long id) {
-    return feedbackService.updateFeedback(content, id);
+  public ResponseEntity<?> updateFeedback(@ModelAttribute DiscussRequestDTO feedbackRequestDTO,
+      @RequestParam(name = "id") Long id) throws IOException {
+    return feedbackService.updateFeedback(feedbackRequestDTO, id);
   }
 
   @DeleteMapping(value = "")

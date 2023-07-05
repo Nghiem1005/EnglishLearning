@@ -19,5 +19,6 @@ public class DiscussResponseDTO {
   private List<String> images;
   private Date createDate;
   private Date updateDate;
+  private boolean pending;
   private DiscussResponseDTO mainDiscuss;
 }

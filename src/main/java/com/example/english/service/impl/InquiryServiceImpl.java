@@ -102,11 +102,18 @@ public class InquiryServiceImpl implements InquiryService {
   }
 
   @Override
-  public ResponseEntity<?> updateInquiry(String content, Long id) {
+  public ResponseEntity<?> updateInquiry(DiscussRequestDTO inquiryRequestDTO, Long id)
+      throws IOException {
     Inquiry inquiry = inquiryRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find inquiry with ID = " + id));
-    inquiry.setId(id);
-    inquiry.setContent(content);
+    if (inquiryRequestDTO.getContent() != null) {
+      inquiry.setContent(inquiryRequestDTO.getContent());
+    }
+
+    if (inquiryRequestDTO.getImages() != null){
+      List<String> nameFiles = storeFile(inquiryRequestDTO.getImages());
+      inquiry.setImages(nameFiles);
+    }
     Inquiry inquirySaved = inquiryRepository.save(inquiry);
     DiscussResponseDTO inquiryResponseDTO = InquiryMapper.INSTANCE.inquiryToInquiryResponseDTO(inquirySaved);
 

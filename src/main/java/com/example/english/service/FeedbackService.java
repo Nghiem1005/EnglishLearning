@@ -14,7 +14,8 @@ public interface FeedbackService {
 
     ResponseEntity<?> createFeedback(DiscussRequestDTO feedbackRequestDTO) throws IOException;
 
-    ResponseEntity<?> updateFeedback(String content, Long id);
+    ResponseEntity<?> updateFeedback(DiscussRequestDTO feedbackRequestDTO, Long id)
+        throws IOException;
 
     ResponseEntity<?> deleteFeedback(Long id);
 

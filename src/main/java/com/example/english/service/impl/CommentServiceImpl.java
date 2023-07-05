@@ -91,11 +91,18 @@ public class CommentServiceImpl implements CommentService {
   }
 
   @Override
-  public ResponseEntity<?> updateComment(String content, Long id) {
+  public ResponseEntity<?> updateComment(DiscussRequestDTO commentRequestDTO, Long id)
+      throws IOException {
     Comment comment = commentRepository.findById(id)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find comment with ID = " + id));
-    comment.setId(id);
-    comment.setContent(content);
+    if (commentRequestDTO.getContent() != null) {
+      comment.setContent(commentRequestDTO.getContent());
+    }
+
+    if (commentRequestDTO.getImages() != null){
+      List<String> nameFiles = storeFile(commentRequestDTO.getImages());
+      comment.setImages(nameFiles);
+    }
     Comment commentSaved = commentRepository.save(comment);
     DiscussResponseDTO commentResponseDTO = CommentMapper.INSTANCE.commentToCommentResponseDTO(commentSaved);
     if (comment.getMainComment() != null) {
