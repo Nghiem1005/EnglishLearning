@@ -12,8 +12,9 @@ import lombok.NoArgsConstructor;
 public class DiscussResponseDTO {
   private Long id;
   private String content;
-  private Long studentId;
-  private String studentName;
+  private Long userId;
+  private String userName;
+  private String userRole;
   private Long subjectId;
   private String subjectName;
   private List<String> images;

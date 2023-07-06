@@ -15,7 +15,8 @@ public interface InquiryMapper {
 
   @Mapping(target = "subjectId", source = "c.lesson.id")
   @Mapping(target = "subjectName", source = "c.lesson.name")
-  @Mapping(target = "studentId", source = "c.user.id")
-  @Mapping(target = "studentName", source = "c.user.name")
+  @Mapping(target = "userId", source = "c.user.id")
+  @Mapping(target = "userName", source = "c.user.name")
+  @Mapping(target = "userRole", source = "c.user.role")
   DiscussResponseDTO inquiryToInquiryResponseDTO(Inquiry c);
 }

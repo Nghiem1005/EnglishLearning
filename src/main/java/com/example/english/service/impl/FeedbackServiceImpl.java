@@ -8,6 +8,7 @@ import com.example.english.entities.Feedback;
 import com.example.english.entities.Inquiry;
 import com.example.english.entities.StudentCourse;
 import com.example.english.entities.User;
+import com.example.english.entities.enums.Role;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.FeedbackMapper;
 import com.example.english.repository.CourseRepository;
@@ -94,19 +95,22 @@ public class FeedbackServiceImpl implements FeedbackService {
       throws IOException {
     Feedback feedback = FeedbackMapper.INSTANCE.feedbackRequestDTOToFeedback(feedbackRequestDTO);
 
-    User student = userRepository.findById(feedbackRequestDTO.getStudentId())
+    User user = userRepository.findById(feedbackRequestDTO.getStudentId())
         .orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + feedbackRequestDTO.getStudentId()));
     Course course = courseRepository.findById(feedbackRequestDTO.getSubjectId())
         .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + feedbackRequestDTO.getSubjectId()));
-    Optional<StudentCourse> getStudentCourse = studentCourseRepository.findStudentCourseByCourseAndUser(course, student);
+    Optional<StudentCourse> getStudentCourse = studentCourseRepository.findStudentCourseByCourseAndUser(course, user);
 
     //Check if the student has taken this course or not
-    if (!getStudentCourse.isPresent()){
-      throw new ResourceNotFoundException("Students who have never taken this course ");
+    if (user.getRole().equals(Role.STUDENT)) {
+      if (!getStudentCourse.isPresent()){
+        throw new ResourceNotFoundException("Students who have never taken this course ");
+      }
     }
 
+
     feedback.setCourse(course);
-    feedback.setUser(student);
+    feedback.setUser(user);
 
     if (feedbackRequestDTO.getImages() != null){
       List<String> nameFiles = storeFile(feedbackRequestDTO.getImages());

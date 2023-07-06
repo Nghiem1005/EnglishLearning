@@ -15,7 +15,8 @@ public interface FeedbackMapper {
 
   @Mapping(target = "subjectId", source = "c.course.id")
   @Mapping(target = "subjectName", source = "c.course.name")
-  @Mapping(target = "studentId", source = "c.user.id")
-  @Mapping(target = "studentName", source = "c.user.name")
+  @Mapping(target = "userId", source = "c.user.id")
+  @Mapping(target = "userName", source = "c.user.name")
+  @Mapping(target = "userRole", source = "c.user.role")
   DiscussResponseDTO feedbackToFeedbackResponseDTO(Feedback c);
 }

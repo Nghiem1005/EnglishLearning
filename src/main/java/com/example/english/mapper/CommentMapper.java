@@ -16,7 +16,8 @@ public interface CommentMapper {
 
   @Mapping(target = "subjectId", source = "c.blog.id")
   @Mapping(target = "subjectName", source = "c.blog.title")
-  @Mapping(target = "studentId", source = "c.user.id")
-  @Mapping(target = "studentName", source = "c.user.name")
+  @Mapping(target = "userId", source = "c.user.id")
+  @Mapping(target = "userName", source = "c.user.name")
+  @Mapping(target = "userRole", source = "c.user.role")
   DiscussResponseDTO commentToCommentResponseDTO(Comment c);
 }
