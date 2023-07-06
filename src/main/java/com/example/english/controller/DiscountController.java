@@ -3,12 +3,16 @@ package com.example.english.controller;
 import com.example.english.dto.request.DiscountRequestDTO;
 import com.example.english.dto.request.WordRequestDTO;
 import com.example.english.service.DiscountService;
+import com.example.english.utils.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -40,5 +44,13 @@ public class DiscountController {
   @PostMapping(value = "/course")
   public ResponseEntity<?> addCourseDiscount(@io.swagger.v3.oas.annotations.parameters.RequestBody List<Long> listCourse, @RequestParam(name = "discountId") Long discountId) {
     return discountService.addCourseDiscount(discountId, listCourse);
+  }
+
+  @GetMapping
+  public ResponseEntity<?> getAllDiscount(
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return discountService.getAllDiscount(pageable);
   }
 }

@@ -3,16 +3,19 @@ package com.example.english.service.impl;
 import com.example.english.dto.request.DiscountRequestDTO;
 import com.example.english.dto.response.CourseResponseDTO;
 import com.example.english.dto.response.DiscountResponseDTO;
+import com.example.english.dto.response.LessonResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.dto.response.WordResponseDTO;
 import com.example.english.entities.Course;
 import com.example.english.entities.Discount;
 import com.example.english.entities.DiscountDetail;
+import com.example.english.entities.Lesson;
 import com.example.english.entities.Word;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.CoursesMapper;
 import com.example.english.mapper.DiscountMapper;
+import com.example.english.mapper.LessonMapper;
 import com.example.english.mapper.WordMapper;
 import com.example.english.repository.CourseRepository;
 import com.example.english.repository.DiscountDetailRepository;
@@ -24,6 +27,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -109,6 +114,19 @@ public class DiscountServiceImpl implements DiscountService {
 
     DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountSaved);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update word success", discountResponseDTO));
+  }
+
+  @Override
+  public ResponseEntity<?> getAllDiscount(Pageable pageable) {
+    Page<Discount> discountPage = discountRepository.findAll(pageable);
+    List<Discount> discountList = discountPage.getContent();
+    List<DiscountResponseDTO> discountResponseDTOS = new ArrayList<>();
+    for (Discount discount : discountList) {
+      DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discount);
+      discountResponseDTOS.add(discountResponseDTO);
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List discount.", discountResponseDTOS,
+        discountPage.getTotalPages()));
   }
 
   @Override
