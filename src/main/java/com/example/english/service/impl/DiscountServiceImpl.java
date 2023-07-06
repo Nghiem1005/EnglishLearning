@@ -57,10 +57,7 @@ public class DiscountServiceImpl implements DiscountService {
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create discount success", discountResponseDTO));
   }
 
-  @Override
-  public ResponseEntity<?> addCourseDiscount(Long discountId, List<Long> listCourse) {
-    Discount discount = discountRepository.findById(discountId)
-        .orElseThrow(() -> new ResourceNotFoundException("Could not find discount with ID = " + discountId));
+  public void addCourseDiscount(Discount discount, List<Long> listCourse) {
 
     List<DiscountDetail> discountDetailList = new ArrayList<>();
     for (Long courseId : listCourse) {
@@ -81,9 +78,9 @@ public class DiscountServiceImpl implements DiscountService {
       discountDetailList.add(discountDetail);
     }
 
-    List<DiscountDetail> discountDetailListSaved =  discountDetailRepository.saveAll(discountDetailList);
+    discountDetailRepository.saveAll(discountDetailList);
 
-    List<DiscountResponseDTO> discountResponseDTOS = new ArrayList<>();
+    /*List<DiscountResponseDTO> discountResponseDTOS = new ArrayList<>();
     for (DiscountDetail discountDetail : discountDetailListSaved) {
       DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountDetail.getDiscount());
       CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(discountDetail.getCourse());
@@ -93,7 +90,7 @@ public class DiscountServiceImpl implements DiscountService {
 
       discountResponseDTOS.add(discountResponseDTO);
     }
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Add course to discount success", discountResponseDTOS));
+    return discountResponseDTOS;*/
   }
 
   @Override
@@ -112,9 +109,13 @@ public class DiscountServiceImpl implements DiscountService {
     if (discountRequestDTO.getEndDate() != null) {
       discount.setEndDate(discountRequestDTO.getEndDate());
     }
+
+    if (!discountRequestDTO.getCourseId().isEmpty()) {
+      addCourseDiscount(discount, discountRequestDTO.getCourseId());
+    }
     Discount discountSaved = discountRepository.save(discount);
 
-    DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountSaved);
+    DiscountResponseDTO discountResponseDTO = convertDiscountToDiscountResponse(discountSaved);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update word success", discountResponseDTO));
   }
 

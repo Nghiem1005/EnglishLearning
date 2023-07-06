@@ -42,10 +42,10 @@ public class DiscountController {
     return discountService.deleteDiscount(id);
   }
 
-  @PostMapping(value = "/course")
+  /*@PostMapping(value = "/course")
   public ResponseEntity<?> addCourseDiscount(@io.swagger.v3.oas.annotations.parameters.RequestBody List<Long> listCourse, @RequestParam(name = "discountId") Long discountId) {
     return discountService.addCourseDiscount(discountId, listCourse);
-  }
+  }*/
 
   @GetMapping
   public ResponseEntity<?> getAllDiscount(
