@@ -143,7 +143,7 @@ public class FeedbackServiceImpl implements FeedbackService {
       feedback.setImages(nameFiles);
     }
 
-    if (feedbackRequestDTO.isPending() == true){
+    if (!feedbackRequestDTO.isPending()){
       feedback.setPending(feedbackRequestDTO.isPending());
     }
 

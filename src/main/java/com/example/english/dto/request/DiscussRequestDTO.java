@@ -13,6 +13,6 @@ public class DiscussRequestDTO {
   private Long subjectId;
   private String content;
   private MultipartFile[] images;
-  private boolean pending = false;
+  private boolean pending = true;
   private Long mainDiscuss;
 }

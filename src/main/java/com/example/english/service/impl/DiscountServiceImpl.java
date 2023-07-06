@@ -21,6 +21,7 @@ import com.example.english.repository.CourseRepository;
 import com.example.english.repository.DiscountDetailRepository;
 import com.example.english.repository.DiscountRepository;
 import com.example.english.service.DiscountService;
+import com.example.english.utils.Converter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -49,8 +50,8 @@ public class DiscountServiceImpl implements DiscountService {
 
     discount.setCode(UUID.randomUUID().toString());
 
-    discount.setEndDate(discountRequestDTO.getEndDate());
-    discount.setStartDate(discountRequestDTO.getStartDate());
+    discount.setEndDate(Converter.timeDateToZero(discountRequestDTO.getEndDate()));
+    discount.setStartDate(Converter.timeDateToZero(discountRequestDTO.getStartDate()));
     Discount discountSaved = discountRepository.save(discount);
     DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountSaved);
 
@@ -107,7 +108,11 @@ public class DiscountServiceImpl implements DiscountService {
     }
 
     if (discountRequestDTO.getEndDate() != null) {
-      discount.setEndDate(discountRequestDTO.getEndDate());
+      discount.setEndDate(Converter.timeDateToZero(discountRequestDTO.getEndDate()));
+    }
+
+    if (discountRequestDTO.getStartDate() != null) {
+      discount.setStartDate(Converter.timeDateToZero(discountRequestDTO.getStartDate()));
     }
 
     if (!discountRequestDTO.getCourseId().isEmpty()) {

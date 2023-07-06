@@ -22,5 +22,6 @@ public interface DiscountRepository extends JpaRepository<Discount, Long> {
 
   Optional<Discount> findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(Course course, Date c_Date, Date currentDate);
 
-  Page<Discount> findDiscountsByStartDateAndEndDate(Date startDate, Date endDate, Pageable pageable);
+  @Query(value = "select * from tbl_discount where (:c_day > start_date and :e_day < end_date)", nativeQuery = true)
+  Page<Discount> findDiscountsByStartDateAndEndDate(@Param("c_day") Date c_day, @Param("e_day") Date e_day, Pageable pageable);
 }

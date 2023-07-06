@@ -126,4 +126,8 @@ public class User {
   @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
   @OnDelete(action = OnDeleteAction.CASCADE)
   private List<Inquiry> inquiries = new ArrayList<>();
+
+  @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+  @OnDelete(action = OnDeleteAction.CASCADE)
+  private List<Comment> comments = new ArrayList<>();
 }
