@@ -6,6 +6,7 @@ import com.example.english.service.DiscountService;
 import com.example.english.utils.Utils;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -53,6 +54,15 @@ public class DiscountController {
       @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size) {
     Pageable pageable = PageRequest.of(page - 1, size);
     return discountService.getAllDiscount(pageable);
+  }
+
+  @GetMapping(value = "/day")
+  public ResponseEntity<?> getAllDiscountInStartAndEndDate(
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page,
+      @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(name = "startDate") Date startDate, @RequestParam(name = "endDate") Date endDate) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return discountService.getDiscountInStartAndEndDay(startDate, endDate, pageable);
   }
 
   @GetMapping(value = {"/{id}"})

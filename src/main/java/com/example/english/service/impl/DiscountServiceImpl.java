@@ -138,6 +138,18 @@ public class DiscountServiceImpl implements DiscountService {
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List discount.", convertDiscountToDiscountResponse(getDiscount)));
   }
 
+  @Override
+  public ResponseEntity<?> getDiscountInStartAndEndDay(Date startDate, Date endDate, Pageable pageable) {
+    Page<Discount> discountPage = discountRepository.findDiscountsByStartDateAndEndDate(startDate, endDate, pageable);
+    List<Discount> discountList = discountPage.getContent();
+    List<DiscountResponseDTO> discountResponseDTOS = new ArrayList<>();
+    for (Discount discount : discountList) {
+      discountResponseDTOS.add(convertDiscountToDiscountResponse(discount));
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List discount.", discountResponseDTOS,
+        discountPage.getTotalPages()));
+  }
+
   private DiscountResponseDTO convertDiscountToDiscountResponse(Discount discount) {
     DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discount);
     discountResponseDTO.setStartDate(discount.getStartDate());

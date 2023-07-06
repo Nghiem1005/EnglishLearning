@@ -3,6 +3,7 @@ package com.example.english.service;
 import com.example.english.dto.request.DiscountRequestDTO;
 import com.example.english.dto.request.WordRequestDTO;
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -13,5 +14,6 @@ public interface DiscountService {
   ResponseEntity<?> updateDiscount(Long discountId, DiscountRequestDTO discountRequestDTO);
   ResponseEntity<?> getAllDiscount(Pageable pageable);
   ResponseEntity<?> getDiscountById(Long id);
+  ResponseEntity<?> getDiscountInStartAndEndDay(Date startDate, Date endDate, Pageable pageable);
   ResponseEntity<?> deleteDiscount(Long id);
 }
