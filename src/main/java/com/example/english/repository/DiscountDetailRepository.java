@@ -17,4 +17,6 @@ public interface DiscountDetailRepository extends JpaRepository<DiscountDetail, 
 
   @Query(value = "select a from DiscountDetail as a where :c_day > a.discount.startDate and :c_day < a.discount.endDate and a.course.id = :id")
   Optional<DiscountDetail> findDiscountByDayInPeriod(@Param("id") Long id, @Param("c_day") Date c_day);
+
+  List<DiscountDetail> findDiscountDetailsByDiscount(Discount discount);
 }

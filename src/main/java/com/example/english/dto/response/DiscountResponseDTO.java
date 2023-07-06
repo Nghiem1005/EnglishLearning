@@ -1,5 +1,7 @@
 package com.example.english.dto.response;
 
+import java.util.Date;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,5 +14,7 @@ public class DiscountResponseDTO {
   private String content;
   private String code;
   private int percent;
-  private CourseResponseDTO courseResponseDTO;
+  private Date startDate;
+  private Date endDate;
+  private List<CourseResponseDTO> courseResponseDTOS;
 }

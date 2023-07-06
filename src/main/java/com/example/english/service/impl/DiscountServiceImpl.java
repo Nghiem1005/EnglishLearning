@@ -87,7 +87,9 @@ public class DiscountServiceImpl implements DiscountService {
     for (DiscountDetail discountDetail : discountDetailListSaved) {
       DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discountDetail.getDiscount());
       CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(discountDetail.getCourse());
-      discountResponseDTO.setCourseResponseDTO(courseResponseDTO);
+      List<CourseResponseDTO> courseResponseDTOS = new ArrayList<>();
+      courseResponseDTOS.add(courseResponseDTO);
+      discountResponseDTO.setCourseResponseDTOS(courseResponseDTOS);
 
       discountResponseDTOS.add(discountResponseDTO);
     }
@@ -122,11 +124,33 @@ public class DiscountServiceImpl implements DiscountService {
     List<Discount> discountList = discountPage.getContent();
     List<DiscountResponseDTO> discountResponseDTOS = new ArrayList<>();
     for (Discount discount : discountList) {
-      DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discount);
-      discountResponseDTOS.add(discountResponseDTO);
+      discountResponseDTOS.add(convertDiscountToDiscountResponse(discount));
     }
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List discount.", discountResponseDTOS,
         discountPage.getTotalPages()));
+  }
+
+  @Override
+  public ResponseEntity<?> getDiscountById(Long id) {
+    Discount getDiscount = discountRepository.findById(id)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find discount with ID = " + id));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List discount.", convertDiscountToDiscountResponse(getDiscount)));
+  }
+
+  private DiscountResponseDTO convertDiscountToDiscountResponse(Discount discount) {
+    DiscountResponseDTO discountResponseDTO = DiscountMapper.INSTANCE.discountToDiscountResponseDTO(discount);
+    discountResponseDTO.setStartDate(discount.getStartDate());
+    discountResponseDTO.setEndDate(discount.getEndDate());
+
+    List<DiscountDetail> discountDetailList = discountDetailRepository.findDiscountDetailsByDiscount(discount);
+    List<CourseResponseDTO> courseResponseDTOS = new ArrayList<>();
+    for (DiscountDetail discountDetail : discountDetailList) {
+      CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(discountDetail.getCourse());
+      courseResponseDTOS.add(courseResponseDTO);
+    }
+
+    discountResponseDTO.setCourseResponseDTOS(courseResponseDTOS);
+    return discountResponseDTO;
   }
 
   @Override
