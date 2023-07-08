@@ -44,6 +44,7 @@ public class Lesson {
   private String video;
 
   @NotNull(message = "Lesson description is required")
+  @Column(length = Integer.MAX_VALUE)
   private String description;
 
   @Min(value = 0, message = "Percent must be greater 0")
