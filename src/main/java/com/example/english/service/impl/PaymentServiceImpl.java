@@ -69,32 +69,14 @@ public class PaymentServiceImpl implements PaymentService {
     //Create bill momo
     Course course = courseRepository.findById(paymentRequestDTO.getCourseId())
         .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + paymentRequestDTO.getCourseId()));
-
     User student = userRepository.findById(paymentRequestDTO.getStudentId())
         .orElseThrow(() -> new ResourceNotFoundException("Could not find student with ID = " + paymentRequestDTO.getStudentId()));
-
-    Bill bill = new Bill();
-    bill.setPaymentMethod("MOMO");
-    bill.setCourse(course);
-    bill.setUser(student);
-
-    //Calculator price
-    Optional<Discount> discount = discountRepository.findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(course, new Date(), new Date());
-    if (discount.isPresent()) {
-      BigDecimal price = course.getPrice().multiply (
-          BigDecimal.valueOf((100 - discount.get().getPercent()) / 100));
-      bill.setPrice(price);
-    } else {
-      bill.setPrice(course.getPrice());
-    }
-
-    Bill billSaved = billRepository.save(bill);
 
     //Create vn pay
     String vnp_Version = "2.1.0";
     String vnp_Command = "pay";
 //        String vnp_TxnRef = String.valueOf(orderId);
-    String vnp_TxnRef = billSaved.getId() + "f" + VNPayConfig.getRandomNumber(7);
+    String vnp_TxnRef = paymentRequestDTO.getCourseId() + "f" + paymentRequestDTO.getStudentId() + "f" + VNPayConfig.getRandomNumber(7);
     String vnp_IpAddr = "127.0.0.1";
     String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
 
@@ -103,7 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
     vnp_Params.put("vnp_Version", vnp_Version);
     vnp_Params.put("vnp_Command", vnp_Command);
     vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-    vnp_Params.put("vnp_Amount", String.valueOf(billSaved.getPrice().intValue()));
+    vnp_Params.put("vnp_Amount", String.valueOf(paymentRequestDTO.getPrice().intValue()));
     vnp_Params.put("vnp_CurrCode", "VND");
 //        vnp_Params.put("vnp_BankCode", "NCP");
     vnp_Params.put("vnp_ReturnUrl", returnUrl);
@@ -111,7 +93,7 @@ public class PaymentServiceImpl implements PaymentService {
 
 
     vnp_Params.put("vnp_TxnRef", vnp_TxnRef);
-    vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang: " + billSaved.getId());
+    vnp_Params.put("vnp_OrderInfo", "Thanh toán khóa học: " + course.getName());
     vnp_Params.put("vnp_Locale", "vn");
     vnp_Params.put("vnp_OrderType", "other");
 
@@ -240,15 +222,35 @@ public class PaymentServiceImpl implements PaymentService {
     if (signValue.equals(vnp_SecureHash)) {
       if ("00".equals(request.getParameter("vnp_TransactionStatus"))) {
         String TxnRef = request.getParameter("vnp_TxnRef");
-        Long billId = Long.valueOf(TxnRef.split("f")[0]);
+        Long courseId = Long.valueOf(TxnRef.split("f")[0]);
+        Long studentId = Long.valueOf(TxnRef.split("f")[1]);
 
-        Bill bill = billRepository.findById(billId)
-            .orElseThrow(() -> new ResourceNotFoundException("Could not find bill with ID = " + billId));
+        Course course = courseRepository.findById(courseId)
+            .orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + courseId));
+        User student = userRepository.findById(studentId)
+            .orElseThrow(() -> new ResourceNotFoundException("Could not find student with ID = " + studentId));
+
+        Bill bill = new Bill();
+        bill.setPaymentMethod("MOMO");
+        bill.setCourse(course);
+        bill.setUser(student);
+
+        //Calculator price
+        Optional<Discount> discount = discountRepository.findDiscountByCourseAndCreateDateBeforeAndEndDateAfter(course, new Date(), new Date());
+        if (discount.isPresent()) {
+          BigDecimal price = course.getPrice().multiply (
+              BigDecimal.valueOf((100 - discount.get().getPercent()) / 100));
+          bill.setPrice(price);
+        } else {
+          bill.setPrice(course.getPrice());
+        }
+
+        Bill billSaved = billRepository.save(bill);
 
         //Attend student in course
         StudentCourse studentCourse = new StudentCourse();
-        studentCourse.setCourse(bill.getCourse());
-        studentCourse.setUser(bill.getUser());
+        studentCourse.setCourse(billSaved.getCourse());
+        studentCourse.setUser(billSaved.getUser());
         studentCourse.setProgress(1);
         studentCourseRepository.save(studentCourse);
       } else {

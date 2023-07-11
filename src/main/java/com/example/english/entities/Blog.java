@@ -42,6 +42,7 @@ public class Blog {
 
   private String image;
 
+  @Column(length = Integer.MAX_VALUE)
   private String description;
 
   @CreationTimestamp
