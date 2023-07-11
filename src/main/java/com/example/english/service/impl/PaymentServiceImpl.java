@@ -58,7 +58,7 @@ public class PaymentServiceImpl implements PaymentService {
     Environment environment = Environment.selectEnv("dev");
     String requestId = String.valueOf(System.currentTimeMillis());
     PaymentResponse responseObject = CreateOrderMoMo.process(environment, requestId, requestId,
-        String.valueOf(paymentRequestDTO.getPrice().longValue()), paymentRequestDTO.getDescription(), returnUrl, returnUrl,
+        String.valueOf(paymentRequestDTO.getPrice()), paymentRequestDTO.getDescription(), returnUrl, returnUrl,
         paymentRequestDTO.getStudentId().toString() + "-" + paymentRequestDTO.getCourseId(), RequestType.CAPTURE_WALLET, true);
     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
   }
@@ -85,7 +85,7 @@ public class PaymentServiceImpl implements PaymentService {
     vnp_Params.put("vnp_Version", vnp_Version);
     vnp_Params.put("vnp_Command", vnp_Command);
     vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-    vnp_Params.put("vnp_Amount", String.valueOf(paymentRequestDTO.getPrice().intValue()));
+    vnp_Params.put("vnp_Amount", String.valueOf(paymentRequestDTO.getPrice() * 100));
     vnp_Params.put("vnp_CurrCode", "VND");
 //        vnp_Params.put("vnp_BankCode", "NCP");
     vnp_Params.put("vnp_ReturnUrl", returnUrl);

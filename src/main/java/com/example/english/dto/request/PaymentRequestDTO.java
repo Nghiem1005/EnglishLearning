@@ -11,7 +11,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 public class PaymentRequestDTO {
-  private BigDecimal price;
+  private int price;
   private String description;
   private Long courseId;
   private Long studentId;
