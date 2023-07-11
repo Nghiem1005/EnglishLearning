@@ -166,7 +166,7 @@ public class PaymentServiceImpl implements PaymentService {
           .orElseThrow(() -> new ResourceNotFoundException("Could not find student with ID = " + studentId));
 
       Bill bill = new Bill();
-      bill.setPaymentMethod("MOMO");
+      bill.setPaymentMethod("VNPay");
       bill.setCourse(course);
       bill.setUser(student);
 
@@ -231,7 +231,7 @@ public class PaymentServiceImpl implements PaymentService {
             .orElseThrow(() -> new ResourceNotFoundException("Could not find student with ID = " + studentId));
 
         Bill bill = new Bill();
-        bill.setPaymentMethod("MOMO");
+        bill.setPaymentMethod("VNPAY");
         bill.setCourse(course);
         bill.setUser(student);
 

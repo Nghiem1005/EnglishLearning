@@ -12,6 +12,8 @@ import com.example.english.dto.response.QuestionResponseDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.dto.response.ResultResponseDTO;
 import com.example.english.entities.Answer;
+import com.example.english.entities.Exam;
+import com.example.english.entities.Lesson;
 import com.example.english.entities.Part;
 import com.example.english.entities.Practice;
 import com.example.english.entities.PracticeDetail;
@@ -27,6 +29,8 @@ import com.example.english.mapper.PracticeMapper;
 import com.example.english.mapper.ResultMapper;
 import com.example.english.mapper.UsersMapper;
 import com.example.english.repository.AnswerRepository;
+import com.example.english.repository.ExamRepository;
+import com.example.english.repository.LessonRepository;
 import com.example.english.repository.PartRepository;
 import com.example.english.repository.PracticeDetailRepository;
 import com.example.english.repository.PracticeRepository;
@@ -56,6 +60,8 @@ public class PracticeServiceImpl implements PracticeService {
   @Autowired private QuestionRepository questionRepository;
   @Autowired private AnswerRepository answerRepository;
   @Autowired private ResultRepository resultRepository;
+  @Autowired private LessonRepository lessonRepository;
+  @Autowired private ExamRepository examRepository;
   @Override
   public ResponseEntity<?> createPractice(Long userId, PracticeRequestDTO practiceRequestDTO) {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
@@ -184,6 +190,75 @@ public class PracticeServiceImpl implements PracticeService {
       practiceResultResponseDTOS.add(practiceResultResponseDTO);
     }
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get result practice by user success", practiceResultResponseDTOS, practices.getTotalPages()));
+  }
+
+  @Override
+  public ResponseEntity<?> getPracticeResultByUserAndLesson(Long userId, Long lessonId) {
+    Practice practice = new Practice();
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
+    Lesson lesson = lessonRepository.findById(lessonId)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
+
+    Exam exam = examRepository.findExamByLesson(lesson)
+        .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with lesson ID = " + lessonId));
+
+    List<Practice> practiceList = practiceRepository.findPracticesByUser(user);
+
+    //Get practice with lesson
+    for (Practice getPractice : practiceList) {
+      List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPractice(getPractice);
+
+      for (PracticeDetail practiceDetail : practiceDetailList) {
+        if (practiceDetail.getPart().getExam().getId() == exam.getId()) {
+          practice = getPractice;
+          break;
+        }
+      }
+      break;
+    }
+
+    PracticeResultResponseDTO practiceResultResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResultResponseDTO(practice);
+
+    //Get exam
+    List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPractice(practice);
+    practiceResultResponseDTO.setExamId(practiceDetailList.get(0).getPart().getExam().getId());
+    practiceResultResponseDTO.setExamName(practiceDetailList.get(0).getPart().getExam().getName());
+
+    //Get part result
+    List<PartResultResponseDTO> partResultResponseDTOS = new ArrayList<>();
+    for (PracticeDetail practiceDetail : practiceDetailList) {
+      PartResultResponseDTO partResultResponseDTO = new PartResultResponseDTO();
+      partResultResponseDTO.setPartId(practiceDetail.getPart().getId());
+      partResultResponseDTO.setSerial(practiceDetail.getPart().getSerial());
+      partResultResponseDTO.setType(practiceDetail.getPart().getType().name());
+
+      //Get result question
+      List<ResultResponseDTO> resultResponseDTOS = new ArrayList<>();
+      List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(practiceDetail.getPart());
+      for (QuestionPhrase questionPhrase : questionPhraseList) {
+        List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
+        for (Question question : questionList) {
+          Result result = resultRepository.findResultByPracticeAndQuestion(practice, question);
+
+          ResultResponseDTO resultResponseDTO = ResultMapper.INSTANCE.resultToResultResponseDTO(result);
+
+          //Get answer
+          Optional<Answer> getAnswer = answerRepository.findAnswerByQuestionAndCorrectIsTrue(question);
+          if (getAnswer.isEmpty()) {
+            throw new ResourceNotFoundException("Question have id is " + question.getId() + "not have answer true");
+          }
+          resultResponseDTO.setAnswer(getAnswer.get().getSerial());
+
+          resultResponseDTOS.add(resultResponseDTO);
+        }
+      }
+      partResultResponseDTO.setResultResponseDTOS(resultResponseDTOS);
+      partResultResponseDTOS.add(partResultResponseDTO);
+    }
+
+    practiceResultResponseDTO.setPartResultResponseDTOS(partResultResponseDTOS);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get result practice by practice success", practiceResultResponseDTO));
   }
 
   @Override

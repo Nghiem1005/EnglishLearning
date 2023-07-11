@@ -11,5 +11,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PracticeRepository extends JpaRepository<Practice, Long> {
   Page<Practice> findPracticesByUser(User user, Pageable pageable);
+  List<Practice> findPracticesByUser(User user);
 
 }

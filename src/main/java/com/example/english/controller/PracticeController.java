@@ -46,4 +46,10 @@ public class PracticeController {
   public ResponseEntity<?> getPracticeResultByPractice(@PathVariable(name = "practiceId") Long practiceId) {
     return practiceService.getPracticeResultByPractice(practiceId);
   }
+
+  @GetMapping(value = "/result/user/lesson/{userId}/{lessonId}")
+  public ResponseEntity<?> getPracticeResultByPractice(@PathVariable(name = "userId") Long userId,
+      @PathVariable(name = "lessonId") Long lessonId) {
+    return practiceService.getPracticeResultByUserAndLesson(userId, lessonId);
+  }
 }

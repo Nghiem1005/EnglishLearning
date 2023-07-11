@@ -9,5 +9,6 @@ public interface PracticeService {
   ResponseEntity<?> createPractice(Long userId, PracticeRequestDTO practiceRequestDTO);
   ResponseEntity<?> updatePractice(Long practiceId, PracticeRequestDTO practiceRequestDTO);
   ResponseEntity<?> getPracticeResultByUser(Long userId, Pageable pageable);
+  ResponseEntity<?> getPracticeResultByUserAndLesson(Long userId, Long lessonId);
   ResponseEntity<?> getPracticeResultByPractice(Long practiceId);
 }
