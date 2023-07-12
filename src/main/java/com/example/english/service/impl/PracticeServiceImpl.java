@@ -242,7 +242,8 @@ public class PracticeServiceImpl implements PracticeService {
       //Get result question
       List<ResultResponseDTO> resultResponseDTOS = new ArrayList<>();
       List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(practiceDetail.getPart());
-      for (QuestionPhrase questionPhrase : questionPhraseList) {
+      for (int i = questionPhraseList.size() -1; i >=0; i--) {
+        QuestionPhrase questionPhrase = questionPhraseList.get(i);
         List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
         for (Question question : questionList) {
           Result result = resultRepository.findResultByPracticeAndQuestion(practice, question);
@@ -290,7 +291,8 @@ public class PracticeServiceImpl implements PracticeService {
       //Get result question
       List<ResultResponseDTO> resultResponseDTOS = new ArrayList<>();
       List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(practiceDetail.getPart());
-      for (QuestionPhrase questionPhrase : questionPhraseList) {
+      for (int i = questionPhraseList.size() -1; i >=0; i--) {
+        QuestionPhrase questionPhrase = questionPhraseList.get(i);
         List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
         for (Question question : questionList) {
           Result result = resultRepository.findResultByPracticeAndQuestion(practice, question);

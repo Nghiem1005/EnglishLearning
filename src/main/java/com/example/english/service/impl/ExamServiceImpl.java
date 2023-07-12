@@ -86,6 +86,8 @@ public class ExamServiceImpl implements ExamService {
 
     List<Part> partList = partRepository.findPartsByExam(exam);
     for (Part part : partList) {
+      List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPart(part);
+      practiceDetailRepository.deleteAll(practiceDetailList);
       partRepository.delete(part);
     }
     examRepository.delete(exam);

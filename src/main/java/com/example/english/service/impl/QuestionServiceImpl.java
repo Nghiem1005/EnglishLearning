@@ -67,6 +67,7 @@ public class QuestionServiceImpl implements QuestionService {
     }
 
     QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionSaved);
+    questionResponseDTO.setExplainContent(questionSaved.getExplainContent());
     questionResponseDTO.setAnswerResponseDTOS(answerResponseDTOS);
 
     return questionResponseDTO;
@@ -79,7 +80,7 @@ public class QuestionServiceImpl implements QuestionService {
     question.setContent(questionRequestDTO.getContent());
 
     QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(questionRepository.save(question));
-
+    questionResponseDTO.setExplainContent(question.getExplainContent());
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update question success!", questionResponseDTO));
   }
 
@@ -99,7 +100,7 @@ public class QuestionServiceImpl implements QuestionService {
         .orElseThrow(() -> new ResourceNotFoundException("Could not find question with ID = " + id));
 
     QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(question);
-
+    questionResponseDTO.setExplainContent(question.getExplainContent());
     List<Answer> answerList = answerRepository.findAnswersByQuestion(question);
     List<AnswerResponseDTO> answerResponseDTOS = new ArrayList<>();
     for (Answer answer : answerList) {

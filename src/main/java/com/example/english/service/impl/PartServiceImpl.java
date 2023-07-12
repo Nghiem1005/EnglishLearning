@@ -56,7 +56,7 @@ public class PartServiceImpl implements PartService {
       part.setExam(exam);
 
       List<Part> partList = partRepository.findPartsByExam(exam);
-      //part.setSerial(partList.size() + 1);
+      part.setSerial(partRequestDTO.getSerial());
 
       Part partSaved = partRepository.save(part);
 
@@ -90,14 +90,15 @@ public class PartServiceImpl implements PartService {
     int totalQuestionPart = 0;
     List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
     List<QuestionPhraseResponseDTO> questionPhraseResponseDTOS = new ArrayList<>();
-    for (QuestionPhrase questionPhrase : questionPhraseList) {
+    for (int i = questionPhraseList.size() - 1; i >= 0; i--) {
+      QuestionPhrase questionPhrase = questionPhraseList.get(i);
       QuestionPhraseResponseDTO questionPhraseResponseDTO = QuestionPhraseMapper.INSTANCE.questionPhraseToQuestionPhraseResponseDTO(questionPhrase);
 
       List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
       List<QuestionResponseDTO> questionResponseDTOS = new ArrayList<>();
       for (Question question : questionList) {
         QuestionResponseDTO questionResponseDTO = QuestionMapper.INSTANCE.questionToQuestionResponseDTO(question);
-
+        questionResponseDTO.setExplainContent(question.getExplainContent());
         List<Answer> answerList = answerRepository.findAnswersByQuestion(question);
         List<AnswerResponseDTO> answerResponseDTOS = new ArrayList<>();
         for (Answer answer : answerList) {
