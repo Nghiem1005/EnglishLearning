@@ -12,6 +12,7 @@ import com.example.english.entities.User;
 import com.example.english.entities.enums.AuthProvider;
 import com.example.english.entities.enums.Role;
 import com.example.english.entities.principal.UserPrincipal;
+import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceAlreadyExistsException;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.UsersMapper;
@@ -137,6 +138,10 @@ public class UserServiceImpl implements UserService {
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authRequestDTO.getEmail(), authRequestDTO.getPassword());
     Authentication authentication = auth.authenticate(authenticationToken);
     UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
+    if (!userPrincipal.isEnabled()) {
+      throw new BadRequestException("Account block");
+    }
 
     String accessToken = tokenProvider.createToken(authentication);
 
