@@ -61,7 +61,7 @@ public class TokenProvider {
 
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());
-
+    System.out.println("++++++++++" + expiryDate);
     return Jwts.builder()
         .setSubject(Long.toString(userPrincipal.getId()))
         .setIssuedAt(new Date())

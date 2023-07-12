@@ -1,5 +1,6 @@
 package com.example.english.entities;
 
+import com.example.english.entities.enums.PracticeType;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -37,6 +38,8 @@ public class Practice {
   private int period;
 
   private String result;
+
+  private PracticeType type;
 
   @ManyToOne(optional = false)
   @JoinColumn(name = "user_id")

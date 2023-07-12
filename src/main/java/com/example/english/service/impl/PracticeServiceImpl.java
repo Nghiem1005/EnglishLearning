@@ -22,6 +22,7 @@ import com.example.english.entities.QuestionPhrase;
 import com.example.english.entities.Result;
 import com.example.english.entities.User;
 import com.example.english.entities.enums.PartType;
+import com.example.english.entities.enums.PracticeType;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.PartMapper;
@@ -78,6 +79,12 @@ public class PracticeServiceImpl implements PracticeService {
       for (PartResultRequestDTO partResultRequestDTO: practiceRequestDTO.getPartResultRequestDTOS()) {
         Part part = partRepository.findById(partResultRequestDTO.getPartId())
             .orElseThrow(() -> new ResourceNotFoundException("Could not find part with ID = " + partResultRequestDTO.getPartId()));
+
+        if (part.getExam().getLesson() != null) {
+          practiceSaved.setType(PracticeType.EXAM_LESSON);
+        } else {
+          practiceSaved.setType(PracticeType.EXAM);
+        }
 
         //Create practice detail
         PracticeDetail practiceDetail = new PracticeDetail();
@@ -160,7 +167,7 @@ public class PracticeServiceImpl implements PracticeService {
   public ResponseEntity<?> getPracticeResultByUser(Long userId, Pageable pageable) {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
 
-    Page<Practice> practices = practiceRepository.findPracticesByUser(user, pageable);
+    Page<Practice> practices = practiceRepository.findPracticesByUserAndType(user, PracticeType.EXAM, pageable);
     if (practices.isEmpty()) {
       throw new ResourceNotFoundException("User have not practice");
     }
