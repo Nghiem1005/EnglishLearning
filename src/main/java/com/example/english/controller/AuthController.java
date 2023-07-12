@@ -1,8 +1,14 @@
 package com.example.english.controller;
 
 import com.example.english.dto.request.AuthRequestDTO;
+import com.example.english.dto.request.RefreshTokenRequestDTO;
 import com.example.english.dto.request.UserRequestDTO;
+import com.example.english.dto.response.RefreshTokenResponseDTO;
+import com.example.english.entities.RefreshToken;
+import com.example.english.exceptions.BadRequestException;
+import com.example.english.service.RefreshTokenService;
 import com.example.english.service.UserService;
+import com.example.english.utils.TokenProvider;
 import java.io.UnsupportedEncodingException;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -22,6 +28,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
   @Autowired
   private UserService userService;
+  @Autowired private RefreshTokenService refreshTokenService;
+  @Autowired private TokenProvider tokenProvider;
 
   @PostMapping(value = "/register")
   public ResponseEntity<?> register(@ModelAttribute @Valid UserRequestDTO userRequestDTO, HttpServletRequest request)
@@ -48,5 +56,19 @@ public class AuthController {
   @PostMapping(value = "/login/admin")
   public ResponseEntity<?> loginAdmin(@RequestBody AuthRequestDTO authRequestDTO) {
     return userService.login(authRequestDTO);
+  }
+
+  @PostMapping("/refreshToken")
+  public ResponseEntity<?> refreshToken(@RequestBody RefreshTokenRequestDTO request) {
+    String requestRefreshToken = request.getRefreshToken();
+
+    return refreshTokenService.findByToken(requestRefreshToken)
+        .map(refreshTokenService::verifyExpiration)
+        .map(RefreshToken::getUser)
+        .map(user -> {
+          String token = tokenProvider.createTokenFromUserId(user.getId());
+          return ResponseEntity.ok(new RefreshTokenResponseDTO(token, requestRefreshToken));
+        })
+        .orElseThrow(() -> new BadRequestException("Refresh token is not in database!"));
   }
 }
