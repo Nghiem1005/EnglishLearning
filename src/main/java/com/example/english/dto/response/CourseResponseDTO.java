@@ -21,6 +21,8 @@ public class CourseResponseDTO {
 
   private String thumbnail;
 
+  private boolean like = false;
+
   private UserResponseDTO teacher;
 
   private DiscountResponseDTO discountResponseDTO;

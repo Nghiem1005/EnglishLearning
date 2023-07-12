@@ -51,14 +51,14 @@ public class CourseController {
 
  @GetMapping(value = "")
   public ResponseEntity<?> getAllCourse(@RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
-      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page) {
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page, @RequestParam(name = "userId") Long userId) {
     Pageable pageable = PageRequest.of(page - 1, size);
-    return courseService.getAllCourse(pageable);
+    return courseService.getAllCourse(userId, pageable);
   }
 
   @GetMapping(value = "{id}")
-  public ResponseEntity<?> getCourseById(@PathVariable(name = "id") Long id) {
-    return courseService.getCourseById(id);
+  public ResponseEntity<?> getCourseById(@PathVariable(name = "id") Long id, @RequestParam(name = "userId") Long userId) {
+    return courseService.getCourseById(id, userId);
   }
 
   @GetMapping(value = "/teacher/{teacherId}")

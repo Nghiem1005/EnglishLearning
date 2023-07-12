@@ -7,6 +7,7 @@ import com.example.english.dto.response.ResponseObject;
 import com.example.english.entities.Bill;
 import com.example.english.entities.Course;
 import com.example.english.entities.DiscountDetail;
+import com.example.english.entities.LikeCourse;
 import com.example.english.entities.User;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.CoursesMapper;
@@ -14,6 +15,7 @@ import com.example.english.mapper.DiscountMapper;
 import com.example.english.repository.BillRepository;
 import com.example.english.repository.CourseRepository;
 import com.example.english.repository.DiscountDetailRepository;
+import com.example.english.repository.LikeCourseRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.CourseService;
 import com.example.english.service.StorageService;
@@ -38,6 +40,7 @@ public class CourseServiceImpl implements CourseService {
   @Autowired private CourseRepository courseRepository;
   @Autowired private BillRepository billRepository;
   @Autowired private DiscountDetailRepository discountDetailRepository;
+  @Autowired private LikeCourseRepository likeCourseRepository;
   @Override
   public ResponseEntity<?> saveCourse(Long teacherId, CourseRequestDTO courseRequestDTO)
       throws IOException {
@@ -128,18 +131,32 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
-  public ResponseEntity<?> getAllCourse(Pageable pageable) {
+  public ResponseEntity<?> getAllCourse(Long userId, Pageable pageable) {
     Page<Course> getCourseList = courseRepository.findAll(pageable);
     List<Course> courseList = getCourseList.getContent();
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList), getCourseList.getTotalPages()));
+    Optional<User> getUser = userRepository.findById(userId);
+    User user = null;
+    if (getUser.isPresent()) {
+      user = getUser.get();
+    }
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList, user), getCourseList.getTotalPages()));
   }
 
   @Override
-  public ResponseEntity<?> getCourseById(Long id) {
+  public ResponseEntity<?> getCourseById(Long id, Long userId) {
     Course course = courseRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Could not find course with ID = " + id));
-    CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(course);
 
+    Optional<User> user = userRepository.findById(userId);
+    CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(course);
+    if (user.isPresent()) {
+      Optional<LikeCourse> likeCourse = likeCourseRepository.findLikeCourseByCourseAndUser(course, user.get());
+
+      if (likeCourse.isPresent()) {
+        courseResponseDTO.setLike(true);
+      }
+    }
     //Get discount now of course
     Optional<DiscountDetail> discountDetail = discountDetailRepository.findDiscountByDayInPeriod(course.getId(), new Date());
     if (discountDetail.isPresent()) {
@@ -155,13 +172,21 @@ public class CourseServiceImpl implements CourseService {
     Page<Course> getCourseList = courseRepository.findCoursesByTeacher(pageable, teacher);
     List<Course> courseList = getCourseList.getContent();
 
-    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList), getCourseList.getTotalPages()));
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList, null), getCourseList.getTotalPages()));
   }
 
-  private List<CourseResponseDTO> toCourseResponseDTOList(List<Course> courseList){
+  private List<CourseResponseDTO> toCourseResponseDTOList(List<Course> courseList, User user){
     List<CourseResponseDTO> courseResponseDTOList = new ArrayList<>();
     for (Course course : courseList){
       CourseResponseDTO courseResponseDTO = CoursesMapper.INSTANCE.courseToCourseResponseDTO(course);
+
+      if (user != null) {
+        Optional<LikeCourse> likeCourse = likeCourseRepository.findLikeCourseByCourseAndUser(course, user);
+
+        if (likeCourse.isPresent()) {
+          courseResponseDTO.setLike(true);
+        }
+      }
 
       //Get discount now of course
       Optional<DiscountDetail> discountDetail = discountDetailRepository.findDiscountByDayInPeriod(course.getId(), new Date());

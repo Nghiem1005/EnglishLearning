@@ -11,8 +11,8 @@ public interface CourseService {
   ResponseEntity<?> updateCourse(Long courseId, CourseRequestDTO courseRequestDTO)
       throws IOException;
   ResponseEntity<?> deleteCourse(Long courseId);
-  ResponseEntity<?> getAllCourse(Pageable pageable);
-  ResponseEntity<?> getCourseById(Long id);
+  ResponseEntity<?> getAllCourse(Long userId, Pageable pageable);
+  ResponseEntity<?> getCourseById(Long id, Long userId);
   ResponseEntity<?> getCourseByTeacher(Pageable pageable, Long teacherId);
   ResponseEntity<?> getCourseByNotTeacher(Pageable pageable);
   ResponseEntity<?> getCourseByType(Pageable pageable, String type);
