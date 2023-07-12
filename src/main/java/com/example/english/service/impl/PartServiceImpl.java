@@ -56,7 +56,7 @@ public class PartServiceImpl implements PartService {
       part.setExam(exam);
 
       List<Part> partList = partRepository.findPartsByExam(exam);
-      part.setSerial(partList.size() + 1);
+      //part.setSerial(partList.size() + 1);
 
       Part partSaved = partRepository.save(part);
 

@@ -12,4 +12,5 @@ import org.springframework.web.multipart.MultipartFile;
 public class PartRequestDTO {
  private String description;
  private String type;
+ private int serial;
 }
