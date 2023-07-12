@@ -68,9 +68,12 @@ public class ListWordServiceImpl implements ListWordService {
       }
     }
 
+    //Get user response
+    UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(user);
 
     ListWordResponseDTO listWordResponseDTO = ListWordMapper.INSTANCE.listWordDTOToListWordResponse(listWordSaved);
     listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
+    listWordResponseDTO.setUserResponseDTO(userResponseDTO);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create list word success", listWordResponseDTO));
   }
@@ -124,6 +127,16 @@ public class ListWordServiceImpl implements ListWordService {
 
       UserResponseDTO userResponseDTO = UsersMapper.MAPPER.userToUserResponseDTO(user);
       listWordResponseDTO.setUserResponseDTO(userResponseDTO);
+
+      //Get word of list word
+      List<WordResponseDTO> wordResponseDTOS = new ArrayList<>();
+      Page<Word> wordPage = wordRepository.findWordsByListWord(pageable, listWord);
+      List<Word> words = wordPage.getContent();
+      for (Word word : words) {
+        WordResponseDTO wordResponseDTO = WordMapper.INSTANCE.wordToWordResponseDTO(word);
+        wordResponseDTOS.add(wordResponseDTO);
+      }
+      listWordResponseDTO.setWordResponseDTOS(wordResponseDTOS);
 
       listWordResponseDTOS.add(listWordResponseDTO);
     }
