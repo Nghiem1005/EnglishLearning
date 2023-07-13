@@ -100,12 +100,13 @@ public class ExamServiceImpl implements ExamService {
         .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
 
     Optional<Exam> getExam = examRepository.findExamByLesson(lesson);
-    if (!getExam.isPresent()) {
-      throw new ResourceNotFoundException("Lesson has not exam");
+    ExamResponseDTO examResponseDTO = null;
+    if (getExam.isPresent()) {
+      Exam exam = getExam.get();
+      examResponseDTO = convertExamToExamResponseDTO(exam);
     }
 
-    Exam exam = getExam.get();
-    ExamResponseDTO examResponseDTO = convertExamToExamResponseDTO(exam);
+
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Get exam lesson", examResponseDTO));
   }
 

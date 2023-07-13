@@ -47,8 +47,7 @@ public class Exam {
   @UpdateTimestamp
   private Date updateDate;
 
-  @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-  @OnDelete(action = OnDeleteAction.CASCADE)
+  @OneToOne
   @JoinColumn(name = "lesson_id")
   private Lesson lesson;
 

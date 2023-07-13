@@ -66,10 +66,13 @@ public class DiscountServiceImpl implements DiscountService {
 
       List<Discount> discountList = discountRepository.findDiscountByDayInPeriod(discount.getStartDate(), discount.getEndDate());
       for (Discount getDiscount : discountList) {
-        Optional<DiscountDetail> discountDetail = discountDetailRepository.findDiscountDetailByCourseAndDiscount(course, getDiscount);
-        if (discountDetail.isPresent()) {
-          throw new BadRequestException("This course have discount by id: " + getDiscount.getId());
+        if (getDiscount.getId() != discount.getId()) {
+          Optional<DiscountDetail> discountDetail = discountDetailRepository.findDiscountDetailByCourseAndDiscount(course, getDiscount);
+          if (discountDetail.isPresent()) {
+            throw new BadRequestException("'" + course.getName() + "' đang được giảm giá trong thời gian này.");
+          }
         }
+
       }
 
       DiscountDetail discountDetail = new DiscountDetail();

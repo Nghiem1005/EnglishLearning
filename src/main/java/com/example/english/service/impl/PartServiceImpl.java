@@ -90,8 +90,7 @@ public class PartServiceImpl implements PartService {
     int totalQuestionPart = 0;
     List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
     List<QuestionPhraseResponseDTO> questionPhraseResponseDTOS = new ArrayList<>();
-    for (int i = questionPhraseList.size() - 1; i >= 0; i--) {
-      QuestionPhrase questionPhrase = questionPhraseList.get(i);
+    for (QuestionPhrase questionPhrase : questionPhraseList) {
       QuestionPhraseResponseDTO questionPhraseResponseDTO = QuestionPhraseMapper.INSTANCE.questionPhraseToQuestionPhraseResponseDTO(questionPhrase);
 
       List<Question> questionList = questionRepository.findQuestionsByQuestionPhrase(questionPhrase);
