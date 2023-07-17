@@ -19,6 +19,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
+import javax.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,6 +39,7 @@ public class Part {
   private Long id;
 
   @NotNull(message = "Part description is required")
+  @Column(length = Integer.MAX_VALUE)
   private String description;
 
   private int serial = 1;

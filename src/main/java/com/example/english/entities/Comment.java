@@ -30,6 +30,7 @@ public class Comment {
   private Long id;
 
   @NotNull(message = "Blog content is required")
+  @Column(length = Integer.MAX_VALUE)
   private String content;
 
   @ElementCollection

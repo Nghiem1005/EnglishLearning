@@ -43,6 +43,7 @@ public class Course {
 
   private BigDecimal price;
 
+  @Column(length = Integer.MAX_VALUE)
   private String description;
 
   private CourseType type;
