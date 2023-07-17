@@ -238,4 +238,10 @@ public class CourseServiceImpl implements CourseService {
   public ResponseEntity<?> getCourseByType(Pageable pageable, String type) {
     return null;
   }
+
+  @Override
+  public ResponseEntity<?> getTypeCourse() {
+    List<String> type = courseRepository.getType();
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", type));
+  }
 }

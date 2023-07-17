@@ -18,4 +18,5 @@ public interface CourseService {
   ResponseEntity<?> getCourseByCategory(Pageable pageable, String type, int point);
   ResponseEntity<?> getCourseByNotTeacher(Pageable pageable);
   ResponseEntity<?> getCourseByType(Pageable pageable, String type);
+  ResponseEntity<?> getTypeCourse();
 }

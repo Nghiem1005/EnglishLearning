@@ -57,6 +57,11 @@ public class CourseController {
     return courseService.getAllCourse(userId, pageable);
   }
 
+  @GetMapping(value = "/type")
+  public ResponseEntity<?> getType() {
+    return courseService.getTypeCourse();
+  }
+
   @GetMapping(value = "/filter")
   public ResponseEntity<?> filterCourse(@RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
       @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page, @RequestParam(name = "userId") Long userId,
