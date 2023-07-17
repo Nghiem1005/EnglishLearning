@@ -83,6 +83,14 @@ public class CourseController {
     return courseService.getCourseByTeacher(pageable, teacherId);
   }
 
+  @GetMapping(value = "/like/{userId}")
+  public ResponseEntity<?> getCourseByLike(@PathVariable(name = "userId") Long userId,
+      @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page) {
+    Pageable pageable = PageRequest.of(page - 1, size);
+    return courseService.getCourseByLike(pageable, userId);
+  }
+
   /*@GetMapping(value = "/teacher/blank")
   public ResponseEntity<?> getCourseByTeacher(
       @RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,

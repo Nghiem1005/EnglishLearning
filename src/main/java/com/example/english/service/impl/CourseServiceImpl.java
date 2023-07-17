@@ -181,6 +181,18 @@ public class CourseServiceImpl implements CourseService {
   }
 
   @Override
+  public ResponseEntity<?> getCourseByLike(Pageable pageable, Long userId) {
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
+
+    Page<LikeCourse> likeCourseList = likeCourseRepository.findLikeCoursesByUser(user, pageable);
+    List<Course> courseList = new ArrayList<>();
+    for (LikeCourse likeCourse : likeCourseList.getContent()) {
+      courseList.add(likeCourse.getCourse());
+    }
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList, user), likeCourseList.getTotalPages()));
+  }
+
+  @Override
   public ResponseEntity<?> filterCourse(Long userId, Pageable pageable, String search) {
     User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
 
