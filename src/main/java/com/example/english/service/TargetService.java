@@ -10,7 +10,7 @@ public interface TargetService {
 
   ResponseEntity<?> getTargetByUser(Long userID);
 
-  ResponseEntity<?> updateTarget(Long targetId);
+  ResponseEntity<?> updateTarget(Long targetId, TargetRequestDTO targetRequestDTO);
 
   ResponseEntity<?> deleteTarget(Long id);
 }
