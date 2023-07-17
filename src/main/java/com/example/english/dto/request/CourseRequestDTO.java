@@ -18,6 +18,10 @@ public class CourseRequestDTO {
 
   private MultipartFile[] documents;
 
+  private String type;
+
+  private int pointTarget;
+
   private BigDecimal price;
 
   private String description;
