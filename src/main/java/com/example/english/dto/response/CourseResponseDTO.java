@@ -19,6 +19,10 @@ public class CourseResponseDTO {
 
   private String description;
 
+  private String type;
+
+  private int pointTarget;
+
   private String thumbnail;
 
   private boolean like = false;
