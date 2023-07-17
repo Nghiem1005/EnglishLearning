@@ -12,5 +12,5 @@ import lombok.NoArgsConstructor;
 public class TargetRequestDTO {
   private String type;
 
-  private int point;
+  private float point;
 }

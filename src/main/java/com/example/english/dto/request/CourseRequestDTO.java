@@ -20,7 +20,7 @@ public class CourseRequestDTO {
 
   private String type;
 
-  private int pointTarget;
+  private float pointTarget;
 
   private BigDecimal price;
 

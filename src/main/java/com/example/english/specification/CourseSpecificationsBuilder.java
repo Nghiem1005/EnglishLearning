@@ -13,7 +13,8 @@ public class CourseSpecificationsBuilder {
   }
 
   public final CourseSpecificationsBuilder with(String key, String operation, Object value) {
-    return with(key, operation, value);
+    params.add(new SearchCriteria(key, operation, value));
+    return this;
   }
 
   public Specification build() {

@@ -27,7 +27,7 @@ public class Target {
 
   private String type;
 
-  private int point;
+  private float point;
 
   @OneToOne
   @JoinColumn(name = "user_id")

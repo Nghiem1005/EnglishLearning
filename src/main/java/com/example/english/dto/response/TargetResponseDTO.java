@@ -12,7 +12,7 @@ public class TargetResponseDTO {
 
   private String type;
 
-  private int point;
+  private float point;
 
   private UserResponseDTO userResponseDTO;
 }

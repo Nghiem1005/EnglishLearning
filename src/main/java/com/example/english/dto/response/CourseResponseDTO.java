@@ -21,7 +21,7 @@ public class CourseResponseDTO {
 
   private String type;
 
-  private int pointTarget;
+  private float pointTarget;
 
   private String thumbnail;
 
