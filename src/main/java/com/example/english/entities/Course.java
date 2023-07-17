@@ -1,5 +1,6 @@
 package com.example.english.entities;
 
+import com.example.english.entities.enums.CourseType;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -44,7 +45,7 @@ public class Course {
 
   private String description;
 
-  private String type;
+  private CourseType type;
 
   private float pointTarget;
 

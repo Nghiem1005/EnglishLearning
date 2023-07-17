@@ -9,6 +9,7 @@ import com.example.english.entities.Course;
 import com.example.english.entities.DiscountDetail;
 import com.example.english.entities.LikeCourse;
 import com.example.english.entities.User;
+import com.example.english.entities.enums.CourseType;
 import com.example.english.exceptions.ResourceNotFoundException;
 import com.example.english.mapper.CoursesMapper;
 import com.example.english.mapper.DiscountMapper;
@@ -241,7 +242,10 @@ public class CourseServiceImpl implements CourseService {
 
   @Override
   public ResponseEntity<?> getTypeCourse() {
-    List<String> type = courseRepository.getType();
+    List<String> type = new ArrayList<>();
+    for (CourseType courseType : CourseType.values()) {
+      type.add(courseType.name());
+    }
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", type));
   }
 }
