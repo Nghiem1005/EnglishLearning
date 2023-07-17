@@ -72,6 +72,26 @@ public class ExamServiceImpl implements ExamService {
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam lesson success", examResponseDTO));
   }
 
+  @Override
+  public ResponseEntity<?> updateExam(Long examId, ExamRequestDTO examRequestDTO) {
+    //Delete old exam
+    Exam exam = examRepository.findById(examId) .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with exam ID = " + examId));
+    exam.setStatus(false);
+    examRepository.save(exam);
+
+    //Create new exam
+    Exam newExam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
+
+    if (exam.getLesson() != null) {
+      newExam.setLesson(exam.getLesson());
+    }
+    Exam examSaved = examRepository.save(exam);
+
+    ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(examSaved);
+
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam success", examResponseDTO));
+  }
+
   private ExamResponseDTO createExamF(ExamRequestDTO examRequestDTO, Exam exam) {
     exam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
     Exam examSaved = examRepository.save(exam);
@@ -84,13 +104,8 @@ public class ExamServiceImpl implements ExamService {
   public ResponseEntity<?> deleteExam(Long examId) {
     Exam exam = examRepository.findById(examId) .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with exam ID = " + examId));
 
-    List<Part> partList = partRepository.findPartsByExam(exam);
-    for (Part part : partList) {
-      List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPart(part);
-      practiceDetailRepository.deleteAll(practiceDetailList);
-      partRepository.delete(part);
-    }
-    examRepository.delete(exam);
+    exam.setStatus(false);
+    examRepository.save(exam);
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Delete exam success"));
   }
 
@@ -99,7 +114,7 @@ public class ExamServiceImpl implements ExamService {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
 
-    Optional<Exam> getExam = examRepository.findExamByLesson(lesson);
+    Optional<Exam> getExam = examRepository.findExamByLessonAndStatusIsTrue(lesson);
     ExamResponseDTO examResponseDTO = null;
     if (getExam.isPresent()) {
       Exam exam = getExam.get();
@@ -121,7 +136,7 @@ public class ExamServiceImpl implements ExamService {
 
   @Override
   public ResponseEntity<?> getAllExam(Pageable pageable) {
-    Page<Exam> examPage = examRepository.findExamsByLessonIsNull(pageable);
+    Page<Exam> examPage = examRepository.findExamsByLessonIsNullAndStatusIsTrue(pageable);
     List<Exam> examList = examPage.getContent();
 
     List<ExamResponseDTO> examResponseDTOS = new ArrayList<>();
@@ -140,8 +155,9 @@ public class ExamServiceImpl implements ExamService {
     //Get part of exam
     List<Part> partList = partRepository.findPartsByExam(exam);
     List<PartResponseDTO> partResponseDTOS = new ArrayList<>();
-    int totalQuestionPart = 0;
+
     for (Part part : partList) {
+      int totalQuestionPart = 0;
       //Get total question
       List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
       for (QuestionPhrase questionPhrase : questionPhraseList) {
@@ -152,13 +168,14 @@ public class ExamServiceImpl implements ExamService {
       partResponseDTO.setTotalQuestion(totalQuestionPart);
       partResponseDTOS.add(partResponseDTO);
 
+      //Get total question
+      totalQuestionExam = totalQuestionExam + totalQuestionPart;
+
       //Get total user who practiced this part
       List<PracticeDetail> practiceDetails = practiceDetailRepository.findPracticeDetailsByPart(part);
       practiceDetailList.addAll(practiceDetails);
     }
 
-    //Get total question
-    totalQuestionExam = totalQuestionExam + totalQuestionPart;
     examResponseDTO.setTotalQuestion(totalQuestionExam);
 
     //Get total user who practiced exam

@@ -1,6 +1,7 @@
 package com.example.english.service.impl;
 
 import com.example.english.entities.RefreshToken;
+import com.example.english.entities.User;
 import com.example.english.entities.principal.UserPrincipal;
 import com.example.english.exceptions.BadRequestException;
 import com.example.english.repository.RefreshTokenRepository;
@@ -32,7 +33,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 
   @Override
   public RefreshToken createRefreshToken(Authentication authentication) {
-    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+    User userPrincipal = (User) authentication.getPrincipal();
 
     RefreshToken refreshToken = new RefreshToken();
 

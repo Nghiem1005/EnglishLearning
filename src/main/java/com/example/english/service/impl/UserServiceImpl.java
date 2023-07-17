@@ -137,11 +137,7 @@ public class UserServiceImpl implements UserService {
   public ResponseEntity<?> login(AuthRequestDTO authRequestDTO) {
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(authRequestDTO.getEmail(), authRequestDTO.getPassword());
     Authentication authentication = auth.authenticate(authenticationToken);
-    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
-
-    if (!userPrincipal.isEnabled()) {
-      throw new BadRequestException("Account block");
-    }
+    User userPrincipal = (User) authentication.getPrincipal();
 
     String accessToken = tokenProvider.createToken(authentication);
 

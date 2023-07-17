@@ -44,6 +44,10 @@ public class Course {
 
   private String description;
 
+  private String type;
+
+  private int pointTarget;
+
   private String thumbnail;
 
   @ManyToOne

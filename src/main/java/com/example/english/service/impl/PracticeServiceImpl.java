@@ -155,10 +155,6 @@ public class PracticeServiceImpl implements PracticeService {
       practice.setPeriod(practiceRequestDTO.getPeriod());
     }
 
-    /*if (practiceRequestDTO.getResult() != null) {
-      practice.setResult(practiceRequestDTO.getResult());
-    }*/
-
     PracticeResponseDTO practiceResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResponseDTO(practiceRepository.save(practice));
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Update result practice success", practiceResponseDTO));
   }
@@ -179,8 +175,10 @@ public class PracticeServiceImpl implements PracticeService {
 
       //Get exam
       List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPractice(practice);
-      practiceResultResponseDTO.setExamId(practiceDetailList.get(0).getPart().getExam().getId());
-      practiceResultResponseDTO.setExamName(practiceDetailList.get(0).getPart().getExam().getName());
+      if (practiceDetailList.size() > 0) {
+        practiceResultResponseDTO.setExamId(practiceDetailList.get(0).getPart().getExam().getId());
+        practiceResultResponseDTO.setExamName(practiceDetailList.get(0).getPart().getExam().getName());
+      }
 
       //Get part result
       List<PartResultResponseDTO> partResultResponseDTOS = new ArrayList<>();
@@ -206,7 +204,7 @@ public class PracticeServiceImpl implements PracticeService {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
 
-    Exam exam = examRepository.findExamByLesson(lesson)
+    Exam exam = examRepository.findExamByLessonAndStatusIsTrue(lesson)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with lesson ID = " + lessonId));
 
     List<Practice> practiceList = practiceRepository.findPracticesByUser(user);
@@ -214,11 +212,12 @@ public class PracticeServiceImpl implements PracticeService {
     //Get practice with lesson
     for (Practice getPractice : practiceList) {
       List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPractice(getPractice);
-
-      for (PracticeDetail practiceDetail : practiceDetailList) {
-        if (practiceDetail.getPart().getExam().getId() == exam.getId()) {
-          practice = getPractice;
-          break;
+      if (practiceDetailList.size() > 0) {
+        for (PracticeDetail practiceDetail : practiceDetailList) {
+          if (practiceDetail.getPart().getExam().getId() == exam.getId()) {
+            practice = getPractice;
+            break;
+          }
         }
       }
       break;
@@ -228,8 +227,11 @@ public class PracticeServiceImpl implements PracticeService {
 
     //Get exam
     List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPractice(practice);
-    practiceResultResponseDTO.setExamId(practiceDetailList.get(0).getPart().getExam().getId());
-    practiceResultResponseDTO.setExamName(practiceDetailList.get(0).getPart().getExam().getName());
+    if (practiceDetailList.size() > 0) {
+      practiceResultResponseDTO.setExamId(practiceDetailList.get(0).getPart().getExam().getId());
+      practiceResultResponseDTO.setExamName(practiceDetailList.get(0).getPart().getExam().getName());
+
+    }
 
     //Get part result
     List<PartResultResponseDTO> partResultResponseDTOS = new ArrayList<>();

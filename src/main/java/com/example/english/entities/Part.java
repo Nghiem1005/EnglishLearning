@@ -45,7 +45,7 @@ public class Part {
   @Enumerated(EnumType.STRING)
   private PartType type;
 
-  @ManyToOne(fetch = FetchType.LAZY)
+  @ManyToOne
   @JoinColumn(name = "exam_id")
   private Exam exam;
 

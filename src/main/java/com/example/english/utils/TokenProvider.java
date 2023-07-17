@@ -1,6 +1,7 @@
 package com.example.english.utils;
 
 import com.example.english.config.AppProperties;
+import com.example.english.entities.User;
 import com.example.english.entities.principal.UserPrincipal;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -57,7 +58,7 @@ public class TokenProvider {
   }
 
   public String createToken(Authentication authentication) {
-    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+    User userPrincipal = (User) authentication.getPrincipal();
 
     Date now = new Date();
     Date expiryDate = new Date(now.getTime() + appProperties.getAuth().getTokenExpirationMsec());

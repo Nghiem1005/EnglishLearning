@@ -19,15 +19,19 @@ import com.example.english.repository.LikeCourseRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.CourseService;
 import com.example.english.service.StorageService;
+import com.example.english.specification.CourseSpecificationsBuilder;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -173,6 +177,32 @@ public class CourseServiceImpl implements CourseService {
     List<Course> courseList = getCourseList.getContent();
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList, null), getCourseList.getTotalPages()));
+  }
+
+  @Override
+  public ResponseEntity<?> filterCourse(Long userId, Pageable pageable, String search) {
+    User user = userRepository.findById(userId).orElseThrow(() -> new ResourceNotFoundException("Could not find user with ID = " + userId));
+
+    CourseSpecificationsBuilder builder = new CourseSpecificationsBuilder();
+    Pattern pattern = Pattern.compile("(\\w+?)(:|<|>)(\\w+?),");
+    Matcher matcher = pattern.matcher(search + ",");
+    while (matcher.find()) {
+      builder.with(matcher.group(1), matcher.group(2), matcher.group(3));
+    }
+
+    Specification<Course> spec = builder.build();
+
+    Page<Course> coursePage = courseRepository.findAll(spec, pageable);
+    List<Course> courseList = coursePage.getContent();
+    return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "List course!", toCourseResponseDTOList(courseList, user), coursePage.getTotalPages()));
+  }
+
+  @Override
+  public ResponseEntity<?> getCourseByCategory(Pageable pageable, String type, int point) {
+    if (point == 0) {
+
+    }
+    return null;
   }
 
   private List<CourseResponseDTO> toCourseResponseDTOList(List<Course> courseList, User user){

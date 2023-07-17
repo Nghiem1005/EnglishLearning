@@ -13,6 +13,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -54,6 +55,14 @@ public class CourseController {
       @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page, @RequestParam(name = "userId") Long userId) {
     Pageable pageable = PageRequest.of(page - 1, size);
     return courseService.getAllCourse(userId, pageable);
+  }
+
+  @GetMapping(value = "/filter")
+  public ResponseEntity<?> filterCourse(@RequestParam(name = "size", required = false, defaultValue = Utils.DEFAULT_PAGE_SIZE) int size,
+      @RequestParam(name = "page", required = false, defaultValue = Utils.DEFAULT_PAGE_NUMBER) int page, @RequestParam(name = "userId") Long userId,
+      @RequestParam(name = "search") String search) {
+    Pageable pageable = PageRequest.of(page - 1, size, Sort.by("pointTarget"));
+    return courseService.filterCourse(userId, pageable, search);
   }
 
   @GetMapping(value = "{id}")

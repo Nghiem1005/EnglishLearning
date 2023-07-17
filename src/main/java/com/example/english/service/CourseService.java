@@ -14,6 +14,8 @@ public interface CourseService {
   ResponseEntity<?> getAllCourse(Long userId, Pageable pageable);
   ResponseEntity<?> getCourseById(Long id, Long userId);
   ResponseEntity<?> getCourseByTeacher(Pageable pageable, Long teacherId);
+  ResponseEntity<?> filterCourse(Long userId, Pageable pageable, String search);
+  ResponseEntity<?> getCourseByCategory(Pageable pageable, String type, int point);
   ResponseEntity<?> getCourseByNotTeacher(Pageable pageable);
   ResponseEntity<?> getCourseByType(Pageable pageable, String type);
 }

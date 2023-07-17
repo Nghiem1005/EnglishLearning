@@ -41,6 +41,8 @@ public class Exam {
 
   private int period;
 
+  private boolean status = true;
+
   @CreationTimestamp
   private Date createDate;
 

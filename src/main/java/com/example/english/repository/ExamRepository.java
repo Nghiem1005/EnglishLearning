@@ -10,6 +10,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ExamRepository extends JpaRepository<Exam, Long> {
-  Page<Exam> findExamsByLessonIsNull(Pageable pageable);
-  Optional<Exam> findExamByLesson(Lesson lesson);
+  Page<Exam> findExamsByLessonIsNullAndStatusIsTrue(Pageable pageable);
+  Optional<Exam> findExamByLessonAndStatusIsTrue(Lesson lesson);
 }
