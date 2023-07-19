@@ -36,8 +36,8 @@ public class ExamController {
     return examService.createExamLesson(lessonId, examRequestDTO);
   }
 
-  @PutMapping(value = "/lesson")
-  public ResponseEntity<?> updateExamLesson(@RequestParam(name = "examId") Long examId ,@RequestBody ExamRequestDTO examRequestDTO) {
+  @PostMapping(value = "/lesson/edit")
+  public ResponseEntity<?> updateExamLesson(@RequestParam(name = "examId") Long examId ,@RequestBody(required = false) ExamRequestDTO examRequestDTO) {
     return examService.updateExam(examId, examRequestDTO);
   }
 

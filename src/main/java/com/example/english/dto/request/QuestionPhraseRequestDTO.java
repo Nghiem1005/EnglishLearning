@@ -11,5 +11,6 @@ import org.springframework.web.multipart.MultipartFile;
 @AllArgsConstructor
 public class QuestionPhraseRequestDTO {
   private int serial;
+  private List<String> image;
   private List<QuestionRequestDTO> questionRequestDTOS;
 }

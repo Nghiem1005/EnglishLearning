@@ -204,23 +204,29 @@ public class PracticeServiceImpl implements PracticeService {
     Lesson lesson = lessonRepository.findById(lessonId)
         .orElseThrow(() -> new ResourceNotFoundException("Could not find lesson with ID = " + lessonId));
 
-    Exam exam = examRepository.findExamByLessonAndStatusIsTrue(lesson)
-        .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with lesson ID = " + lessonId));
-
+    List<Exam> exam = examRepository.findExamsByLesson(lesson);
     List<Practice> practiceList = practiceRepository.findPracticesByUser(user);
 
     //Get practice with lesson
+    boolean flag = true;
     for (Practice getPractice : practiceList) {
       List<PracticeDetail> practiceDetailList = practiceDetailRepository.findPracticeDetailsByPractice(getPractice);
       if (practiceDetailList.size() > 0) {
         for (PracticeDetail practiceDetail : practiceDetailList) {
-          if (practiceDetail.getPart().getExam().getId() == exam.getId()) {
+          if (exam.contains(practiceDetail.getPart().getExam())) {
             practice = getPractice;
+            flag = false;
             break;
           }
         }
       }
-      break;
+      if (!flag) {
+        break;
+      }
+    }
+
+    if (flag) {
+      throw new ResourceNotFoundException("Not use practice");
     }
 
     PracticeResultResponseDTO practiceResultResponseDTO = PracticeMapper.INSTANCE.practiceToPracticeResultResponseDTO(practice);

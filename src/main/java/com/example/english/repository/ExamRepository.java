@@ -2,6 +2,7 @@ package com.example.english.repository;
 
 import com.example.english.entities.Exam;
 import com.example.english.entities.Lesson;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,4 +13,5 @@ import org.springframework.stereotype.Repository;
 public interface ExamRepository extends JpaRepository<Exam, Long> {
   Page<Exam> findExamsByLessonIsNullAndStatusIsTrue(Pageable pageable);
   Optional<Exam> findExamByLessonAndStatusIsTrue(Lesson lesson);
+  List<Exam> findExamsByLesson(Lesson lesson);
 }

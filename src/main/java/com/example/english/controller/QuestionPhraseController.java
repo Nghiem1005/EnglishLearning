@@ -25,7 +25,7 @@ public class QuestionPhraseController {
   @PostMapping(value = "", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
   @RequestBody(content = @Content(encoding = @Encoding(name = "questionPhraseRequestDTO", contentType = "application/json")))
   public ResponseEntity<?> addQuestionPhrase(@RequestPart QuestionPhraseRequestDTO questionPhraseRequestDTO, @RequestParam(name = "partId") Long partId,
-      @RequestPart MultipartFile[] documents) throws IOException {
+      @RequestPart(required = false) MultipartFile[] documents) throws IOException {
     return questionPhraseService.createQuestionPhrase(partId, questionPhraseRequestDTO, documents);
   }
 }

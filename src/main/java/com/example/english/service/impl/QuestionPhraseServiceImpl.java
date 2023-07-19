@@ -47,10 +47,15 @@ public class QuestionPhraseServiceImpl implements QuestionPhraseService {
       List<QuestionPhrase> questionPhraseList = questionPhraseRepository.findQuestionPhrasesByPart(part);
       questionPhrase.setSerial(questionPhraseRequestDTO.getSerial());
 
+      List<String> image = new ArrayList<>();
       if (documents != null) {
         List<String> nameFiles = storeFile(documents);
-        questionPhrase.setDocument(nameFiles);
+        image.addAll(nameFiles);
       }
+      if (questionPhraseRequestDTO.getImage() != null){
+        image.addAll(questionPhraseRequestDTO.getImage());
+      }
+      questionPhrase.setDocument(image);
 
       questionPhrase.setPart(part);
 

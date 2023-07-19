@@ -85,8 +85,8 @@ public class LessonServiceImpl implements LessonService {
     if (lessonRequestDTO.getVideo() != null){
       lesson.setVideo(storageService.uploadFile(lessonRequestDTO.getVideo()));
     }
-
-    LessonResponseDTO lessonResponseDTO = LessonMapper.INSTANCE.lessonToLessonResponseDTO(lessonRepository.save(lesson));
+    Lesson lessonSaved = lessonRepository.save(lesson);
+    LessonResponseDTO lessonResponseDTO = LessonMapper.INSTANCE.lessonToLessonResponseDTO(lessonSaved);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create lesson success!", lessonResponseDTO));
   }

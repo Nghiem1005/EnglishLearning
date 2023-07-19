@@ -75,19 +75,23 @@ public class ExamServiceImpl implements ExamService {
   @Override
   public ResponseEntity<?> updateExam(Long examId, ExamRequestDTO examRequestDTO) {
     //Delete old exam
-    Exam exam = examRepository.findById(examId) .orElseThrow(() -> new ResourceNotFoundException("Could not find exam with exam ID = " + examId));
+    Exam exam = examRepository.findById(examId).orElseThrow(() -> new ResourceNotFoundException("Could not find exam with exam ID = " + examId));
     exam.setStatus(false);
     examRepository.save(exam);
-
+    ExamResponseDTO examResponseDTO = new ExamResponseDTO();
     //Create new exam
-    Exam newExam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
+    if (examRequestDTO.getName() != null) {
+      Exam newExam = ExamMapper.INSTANCE.examRequestDTOToExam(examRequestDTO);
 
-    if (exam.getLesson() != null) {
-      newExam.setLesson(exam.getLesson());
+      if (exam.getLesson() != null) {
+        newExam.setLesson(exam.getLesson());
+      }
+      Exam examSaved = examRepository.save(newExam);
+
+      examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(examSaved);
+    } else {
+      examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(exam);
     }
-    Exam examSaved = examRepository.save(exam);
-
-    ExamResponseDTO examResponseDTO = ExamMapper.INSTANCE.examToExamResponseDTO(examSaved);
 
     return ResponseEntity.status(HttpStatus.OK).body(new ResponseObject(HttpStatus.OK, "Create exam success", examResponseDTO));
   }
