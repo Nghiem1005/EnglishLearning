@@ -17,11 +17,11 @@ import com.example.english.repository.DiscountRepository;
 import com.example.english.repository.StudentCourseRepository;
 import com.example.english.repository.UserRepository;
 import com.example.english.service.PaymentService;
-import com.mservice.config.Environment;
+/*import com.mservice.config.Environment;
 import com.mservice.enums.RequestType;
 import com.mservice.models.PaymentResponse;
 import com.mservice.processor.CreateOrderMoMo;
-import com.mservice.shared.utils.LogUtils;
+import com.mservice.shared.utils.LogUtils;*/
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -52,7 +52,7 @@ public class PaymentServiceImpl implements PaymentService {
   @Autowired private UserRepository userRepository;
   @Autowired private DiscountRepository discountRepository;
 
-  @Override
+  /*@Override
   public ResponseEntity<PaymentResponse> createPaymentMomo(PaymentRequestDTO paymentRequestDTO, String returnUrl) throws Exception{
     LogUtils.init();
     Environment environment = Environment.selectEnv("dev");
@@ -61,7 +61,7 @@ public class PaymentServiceImpl implements PaymentService {
         String.valueOf(paymentRequestDTO.getPrice()), paymentRequestDTO.getDescription(), returnUrl, returnUrl,
         paymentRequestDTO.getStudentId().toString() + "-" + paymentRequestDTO.getCourseId(), RequestType.CAPTURE_WALLET, true);
     return ResponseEntity.status(HttpStatus.OK).body(responseObject);
-  }
+  }*/
 
   @Override
   public ResponseEntity<?> createPaymentVNPay(PaymentRequestDTO paymentRequestDTO,

@@ -3,7 +3,6 @@ package com.example.english.controller;
 import com.example.english.dto.request.PaymentRequestDTO;
 import com.example.english.dto.response.ResponseObject;
 import com.example.english.service.PaymentService;
-import com.mservice.models.PaymentResponse;
 import java.io.IOException;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -27,11 +26,11 @@ public class PaymentController {
   public static final String RETURN_URL = "courses";
   @Autowired private PaymentService paymentService;
 
-  @PostMapping(value = "/momo")
+  /*@PostMapping(value = "/momo")
   public ResponseEntity<PaymentResponse> momo(@RequestBody PaymentRequestDTO paymentRequestDTO) throws Exception{
     return paymentService.createPaymentMomo(paymentRequestDTO,
         "http://localhost:8080/" + SUCCESS_URL);
-  }
+  }*/
 
   @GetMapping(value = "/success")
   public RedirectView successPay(@RequestParam(name = "amount") String amount, @RequestParam(name = "extraData") String extraData, @RequestParam(name = "resultCode") Integer resultCode) {
